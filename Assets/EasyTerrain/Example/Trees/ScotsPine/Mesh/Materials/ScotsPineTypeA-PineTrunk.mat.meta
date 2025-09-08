@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: a58bbda1f175a42b1a7a319802ad4dec
+timeCreated: 1529060200
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Example/Trees/ScotsPine/Mesh/Materials/ScotsPineTypeA-PineTrunk.mat
+  uploadId: 274826

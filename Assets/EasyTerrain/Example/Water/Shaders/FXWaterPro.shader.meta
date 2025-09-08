@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 1cac2e0bcc34e4b3cbb4bd85982eba83
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Example/Water/Shaders/FXWaterPro.shader
+  uploadId: 274826

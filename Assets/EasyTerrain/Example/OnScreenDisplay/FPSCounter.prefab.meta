@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e2960700cf4bc4b1c98780e20a258393
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Example/OnScreenDisplay/FPSCounter.prefab
+  uploadId: 274826

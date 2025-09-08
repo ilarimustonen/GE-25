@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ce390ee800e2a4fc4872943caf4793e9
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Shader/EasyTerrain_Diffuse_FirstPass.shader
+  uploadId: 274826

@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 93483d1e70b9c40f0a6d81376de34714
+timeCreated: 1517087377
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Scripts/Noise/NoiseGenerator.NoiseSampleSettings.cs
+  uploadId: 274826

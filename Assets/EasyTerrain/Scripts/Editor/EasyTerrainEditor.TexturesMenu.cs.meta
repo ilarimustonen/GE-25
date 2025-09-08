@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d5bd914e3aa8844f5803896b4eec37d6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Scripts/Editor/EasyTerrainEditor.TexturesMenu.cs
+  uploadId: 274826

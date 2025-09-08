@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 06593a445047840cfac36b9f07d42daa
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Shader/EasyTerrain_Diffuse_Tools.cginc
+  uploadId: 274826

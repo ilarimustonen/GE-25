@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 7277ea2bf882341f99f83e8c918b332a
+timeCreated: 1524941655
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Scripts/Editor/EasyTerrainEditor.DrawPreviewTexture.cs
+  uploadId: 274826

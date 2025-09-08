@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4a6d6934d0e7b46ad9e0629d564c4544
+timeCreated: 1526674579
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Example/Buildings/Building_02_Rundown.prefab
+  uploadId: 274826

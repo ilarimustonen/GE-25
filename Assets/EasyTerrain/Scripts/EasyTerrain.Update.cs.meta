@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 57f7b2c47d0a642c08bedc1e3214529a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Scripts/EasyTerrain.Update.cs
+  uploadId: 274826

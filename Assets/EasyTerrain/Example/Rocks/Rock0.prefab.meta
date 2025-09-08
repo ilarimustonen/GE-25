@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2db309d0260394fa795eed1df8581242
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123096
+  packageName: Easy Terrain
+  packageVersion: 1.1
+  assetPath: Assets/EasyTerrain/Example/Rocks/Rock0.prefab
+  uploadId: 274826
