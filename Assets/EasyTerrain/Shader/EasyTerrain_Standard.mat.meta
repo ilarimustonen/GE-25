@@ -1,11 +1,7 @@
 fileFormatVersion: 2
 guid: 3a6c841f493db4f90acc61c0186cc7d3
-NativeFormatImporter:
-  externalObjects: {}
-  mainObjectFileID: 2100000
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+labels:
+- UnityAI
 AssetOrigin:
   serializedVersion: 1
   productId: 123096
@@ -13,3 +9,9 @@ AssetOrigin:
   packageVersion: 1.1
   assetPath: Assets/EasyTerrain/Shader/EasyTerrain_Standard.mat
   uploadId: 274826
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
