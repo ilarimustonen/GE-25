@@ -1,5 +1,6 @@
 ﻿ using UnityEngine;
  using Ilumisoft.HealthSystem;
+ using System.Collections;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -29,10 +30,32 @@ namespace StarterAssets
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
 
+        [Header("Global Audio")]
+        [Range(0, 1)] public float GlobalAudioVolume = 1f;
+
+        [Header("Footstep Audio Stuff")]
+        public AudioSource FootstepSource1;
+        public AudioSource FootstepSource2;
+        private AudioSource[] _footstepSources;
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
         [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
 
+        [Header("Combat Audio Stuff")]
+        public AudioClip SwordSwingAudioClip;
+        public AudioClip SwordHitAudioClip;
+        public AudioClip ForceBlastAudioClip;
+        public AudioSource ActionSource1;
+        public AudioSource ActionSource2;
+        public AudioSource ActionSource3;
+        public AudioSource ActionSource4;
+
+        private AudioSource[] _actionSources;
+        [Range(0, 1)] public float ForceBlastAudioVolume = 0.5f;
+        [Range(0, 1)] public float SwordSwingAudioVolume = 0.5f;
+        [Range(0, 1)] public float SwordHitAudioVolume = 0.5f;
+
+        [Header("Player Movement Variables")]
         [Space(10)]
         [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
@@ -43,6 +66,12 @@ namespace StarterAssets
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
         public float JumpTimeout = 0.50f;
+
+        [Tooltip("How long the jump input will be buffered (in seconds). Allows jumping before landing.")]
+        public float JumpBufferTime = 0.2f;
+
+        [Tooltip("How long you can still jump after walking off a ledge (in seconds).")]
+        public float CoyoteTime = 0.2f;
 
         [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
         public float FallTimeout = 0.15f;
@@ -76,12 +105,25 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
-        [Header("Player Abilities")]
+        [Header("Player Combat")]
+        public SwordController swordController;
+
+        [Header("Attack speed")]
+        [Tooltip("The cooldown time in seconds for the sword attack.")]
+        public float AttackCooldown = 3f;
+
+        [Header("Weapon Switching")]
+        [Tooltip("The sword attached to the spine/back (cosmetic).")]
+        public GameObject swordOnBack;
+
+        [Tooltip("The sword attached to the hand (functional).")]
+        public GameObject swordInHand;
+
+        [Header("Force Blast")]
         [Tooltip("The force of the blast pushing objects away.")]
         public float ForceBlastForce = 1000f;
 
-        [Header("Blast Damage")]
-        [Tooltip("The damage the ability deals to hitboxes.")]
+        [Tooltip("Max blast damage to hitboxes")]
         public float maxDamage = 100.0f;
 
         [Tooltip("The radius of the blast effect.")]
@@ -93,7 +135,13 @@ namespace StarterAssets
         [Tooltip("The cooldown time in seconds for the force blast.")]
         public float ForceBlastCooldown = 2f;
 
-        [Tooltip("Vertical offset for the VFX spawn position relative to the player.")]
+        [Header("Force Blast Object Pool")]
+        [Tooltip("How many ForceBlastVFX objects to pre-instantiate.")]
+        public int PoolSize = 5;
+        private GameObject[] _vfxPool;
+        private int _currentVfxIndex = 0; // Index to cycle through the pool
+
+        [Tooltip("Vertical offset for the force blast VFX spawn position relative to the player.")]
         public Vector3 ForceBlastVFXOffset = new Vector3(0f, 1f, 0f);
 
         [Tooltip("The VFX prefab to spawn when the blast occurs.")]
@@ -104,9 +152,8 @@ namespace StarterAssets
 
         // ability timeout deltatime
         private float _forceBlastTimeoutDelta;
-
-        // animation IDs
-        private int _animIDForceBlast;
+        private float _attackTimeoutDelta;
+        private bool _isAttacking;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -119,6 +166,8 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
+        private float _jumpBufferTimer;
+        private float _coyoteTimer;
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -130,6 +179,8 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDForceBlast;
+        private int _animIDAttack;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -172,8 +223,25 @@ namespace StarterAssets
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
-#if ENABLE_INPUT_SYSTEM 
-            _playerInput = GetComponent<PlayerInput>();
+
+            // Setup audio sources array
+            _footstepSources = new AudioSource[] { FootstepSource1, FootstepSource2 };
+
+            // Initialize the action audio sources array
+            _actionSources = new AudioSource[] { ActionSource1, ActionSource2, ActionSource3, ActionSource4 };
+
+            // Initialize the VFX pool
+            if (ForceBlastVFX != null)
+            {
+                _vfxPool = new GameObject[PoolSize];
+                for (int i = 0; i < PoolSize; i++)
+                {
+                    _vfxPool[i] = Instantiate(ForceBlastVFX, transform.position, Quaternion.identity, transform);
+                    _vfxPool[i].SetActive(false); // Turn them off
+                }
+            }
+#if ENABLE_INPUT_SYSTEM
+                _playerInput = GetComponent<PlayerInput>();
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -184,28 +252,40 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
             _forceBlastTimeoutDelta = ForceBlastCooldown;
+            _attackTimeoutDelta = AttackCooldown;
         }
 
         private void Update()
         {
-            _hasAnimator = TryGetComponent(out _animator);
+                _hasAnimator = TryGetComponent(out _animator);
 
-            // Handle ability cooldown
-            if (_forceBlastTimeoutDelta >= 0.0f)
-            {
-                _forceBlastTimeoutDelta -= Time.deltaTime;
-            }
+                // Handle ability cooldown
+                if (_forceBlastTimeoutDelta >= 0.0f)
+                {
+                    _forceBlastTimeoutDelta -= Time.deltaTime;
+                }
 
-            // Check for force blast input
-            if (_input.forceBlast && _forceBlastTimeoutDelta <= 0.0f)
-            {
-                HandleForceBlast();
-                _input.forceBlast = false; // Consume the input
-            }
+                // Handle attack cooldown
+                if (_attackTimeoutDelta >= 0.0f)
+                {
+                    _attackTimeoutDelta -= Time.deltaTime;
+                }
 
-            JumpAndGravity();
-            GroundedCheck();
-            Move();
+                // Check for force blast input
+                if (_input.forceBlast && _forceBlastTimeoutDelta <= 0.0f && !_isAttacking)
+                {
+                    HandleForceBlast();
+                }
+
+                if (_input.attack && _attackTimeoutDelta <= 0.0f)
+                {
+                    _isAttacking = true;
+                    HandleAttack();
+                }
+
+                JumpAndGravity();
+                GroundedCheck();
+                Move();
         }
 
         private void LateUpdate()
@@ -221,6 +301,7 @@ namespace StarterAssets
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
             _animIDForceBlast = Animator.StringToHash("ForceBlast");
+            _animIDAttack = Animator.StringToHash("Attack");
         }
 
         private void GroundedCheck()
@@ -261,6 +342,13 @@ namespace StarterAssets
 
         private void Move()
         {
+            // If attacking, we simply set the input vector to zero to stop horizontal movement.
+            Vector2 moveInput = _input.move;
+            if (_isAttacking)
+            {
+                moveInput = Vector2.zero;
+            }
+
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -268,43 +356,52 @@ namespace StarterAssets
 
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
-            if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+            if (moveInput == Vector2.zero) targetSpeed = 0.0f;
+
+            if (_isAttacking && Grounded)
+            {
+                _speed = 0.0f; // Force instant stop/prevent acceleration
+            }
 
             // a reference to the players current horizontal velocity
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
             float speedOffset = 0.1f;
-            float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+            float inputMagnitude = _input.analogMovement ? moveInput.magnitude : 1f;
 
-            // accelerate or decelerate to target speed
-            if (currentHorizontalSpeed < targetSpeed - speedOffset ||
+            // accelerate or decelerate to target speed, but only if not attacking and not grounded
+            if (!_isAttacking || Grounded)
+            {
+
+                if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)
-            {
-                // creates curved result rather than a linear one giving a more organic speed change
-                // note T in Lerp is clamped, so we don't need to clamp our speed
-                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
-                    Time.deltaTime * SpeedChangeRate);
+                {
+                    // creates curved result rather than a linear one giving a more organic speed change
+                    // note T in Lerp is clamped, so we don't need to clamp our speed
+                    _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
+                        Time.deltaTime * SpeedChangeRate);
 
-                // round speed to 3 decimal places
-                _speed = Mathf.Round(_speed * 1000f) / 1000f;
-            }
-            else
-            {
-                _speed = targetSpeed;
+                    // round speed to 3 decimal places
+                    _speed = Mathf.Round(_speed * 1000f) / 1000f;
+                }
+                else
+                {
+                    _speed = targetSpeed;
+                }
             }
 
             _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
             // normalise input direction
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
-            if (_input.move != Vector2.zero)
+            if (moveInput != Vector2.zero)
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                  _mainCamera.transform.eulerAngles.y;
+                                             _mainCamera.transform.eulerAngles.y;
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
                     RotationSmoothTime);
 
@@ -315,9 +412,8 @@ namespace StarterAssets
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-            // move the player
-            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
-                             new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            // move the player (THIS LINE NOW APPLIES GRAVITY CORRECTLY)
+            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
             // update animator if using character
             if (_hasAnimator)
@@ -329,67 +425,82 @@ namespace StarterAssets
 
         private void JumpAndGravity()
         {
+            // --- Handle Coyote Time ---
             if (Grounded)
             {
-                // reset the fall timeout timer
+                _coyoteTimer = CoyoteTime; // Reset coyote timer when on the ground
+            }
+            else
+            {
+                _coyoteTimer -= Time.deltaTime; // Tick down coyote timer when in the air
+            }
+
+            // --- Handle Jump Input Buffering ---
+            if (_input.jump)
+            {
+                _jumpBufferTimer = JumpBufferTime; // Set the buffer timer when jump is pressed
+                _input.jump = false; // Consume the input immediately
+            }
+            else
+            {
+                _jumpBufferTimer -= Time.deltaTime; // Tick down buffer timer
+            }
+
+            // --- The Actual Jump Logic ---
+            // A jump can occur if the buffer is active AND we are either grounded or within the coyote time window.
+            if (_jumpBufferTimer > 0f && _coyoteTimer > 0f)
+            {
+                // Calculate jump velocity
+                _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+                // Update animator
+                if (_hasAnimator)
+                {
+                    _animator.SetBool(_animIDJump, true);
+                }
+
+                // Reset timers to prevent re-jumping
+                _jumpBufferTimer = 0f;
+                _coyoteTimer = 0f;
+            }
+
+            // --- Gravity and Fall State ---
+            if (Grounded)
+            {
+                // Reset the fall timeout timer
                 _fallTimeoutDelta = FallTimeout;
 
-                // update animator if using character
+                // Update animator
                 if (_hasAnimator)
                 {
                     _animator.SetBool(_animIDJump, false);
                     _animator.SetBool(_animIDFreeFall, false);
                 }
 
-                // stop our velocity dropping infinitely when grounded
+                // Stop our velocity from dropping infinitely when grounded
                 if (_verticalVelocity < 0.0f)
                 {
                     _verticalVelocity = -2f;
                 }
-
-                // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
-                {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-
-                    // update animator if using character
-                    if (_hasAnimator)
-                    {
-                        _animator.SetBool(_animIDJump, true);
-                    }
-                }
-
-                // jump timeout
-                if (_jumpTimeoutDelta >= 0.0f)
-                {
-                    _jumpTimeoutDelta -= Time.deltaTime;
-                }
             }
             else
             {
-                // reset the jump timeout timer
-                _jumpTimeoutDelta = JumpTimeout;
-
-                // fall timeout
+                // Fall timeout
                 if (_fallTimeoutDelta >= 0.0f)
                 {
                     _fallTimeoutDelta -= Time.deltaTime;
                 }
                 else
                 {
-                    // update animator if using character
+                    // Update animator
                     if (_hasAnimator)
                     {
                         _animator.SetBool(_animIDFreeFall, true);
                     }
                 }
-
-                // if we are not grounded, do not jump
-                _input.jump = false;
             }
 
-            // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+            // Apply gravity over time if under terminal velocity
             if (_verticalVelocity < _terminalVelocity)
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
@@ -397,21 +508,29 @@ namespace StarterAssets
         }
         public void TriggerBlastEffect()
         {
-            // Instantiate VFX
-            if (ForceBlastVFX != null)
+            // --- VFX POOL LOGIC ---
+            if (_vfxPool != null && _vfxPool.Length > 0)
             {
-                // Calculate the spawn position with the offset
+                // 1. Get the next available VFX object in the cycle
+                GameObject spawnedVFX = _vfxPool[_currentVfxIndex];
+
+                // 2. Cycle the index for the next use
+                _currentVfxIndex = (_currentVfxIndex + 1) % PoolSize;
+
+                // 3. Position and activate the object
                 Vector3 spawnPosition = transform.position + ForceBlastVFXOffset;
+                spawnedVFX.transform.position = spawnPosition;
+                spawnedVFX.transform.rotation = Quaternion.identity;
+                spawnedVFX.transform.parent = transform; // Keep it parented
 
-                // Instantiate the VFX and store a reference
-                GameObject spawnedVFX = Instantiate(ForceBlastVFX, spawnPosition, Quaternion.identity);
+                spawnedVFX.SetActive(true);
 
-                // Make the spawned VFX a child of the player for it to follow
-                spawnedVFX.transform.parent = transform;
-
-                // Destroy the spawned VFX after a set amount of time
-                Destroy(spawnedVFX, VFXLifetime);
+                // 4. Start the Coroutine to deactivate it after its lifetime
+                StartCoroutine(DeactivateVFXAfterTime(spawnedVFX, VFXLifetime));
             }
+
+            // Play sound effect
+            PlayClipFromPool(ForceBlastAudioClip, _actionSources, ForceBlastAudioVolume * GlobalAudioVolume);
 
             // Find all colliders within the blast radius
             Collider[] colliders = Physics.OverlapSphere(transform.position, ForceBlastRadius);
@@ -447,6 +566,16 @@ namespace StarterAssets
                 }
             }
         }
+        private IEnumerator DeactivateVFXAfterTime(GameObject vfxObject, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            // Only deactivate if it hasn't been re-activated by a subsequent blast
+            if (vfxObject.activeSelf)
+            {
+                vfxObject.SetActive(false);
+            }
+        }
 
         private void HandleForceBlast()
         {
@@ -459,7 +588,57 @@ namespace StarterAssets
                 _animator.SetTrigger(_animIDForceBlast);
             }
 
-            
+        }
+        private void HandleAttack()
+        {
+
+            // Reset the cooldown timer
+            _attackTimeoutDelta = AttackCooldown;
+
+            // Trigger animation
+            if (_hasAnimator)
+            {
+                _animator.SetTrigger(_animIDAttack);
+            }
+        }
+
+        // Called by the Animation Event in the 'Gunslinger_Attack04' clip
+        public void StartAttack()
+        {
+            if (swordOnBack != null)
+                swordOnBack.SetActive(false); // Hide the cosmetic sword
+
+            if (swordInHand != null)
+                swordInHand.SetActive(true);  // Show the functional sword in the hand
+
+            if (swordController != null)
+            {
+                // Delegates the command to the actual sword script.
+                swordController.EnableCollider();
+            }
+            PlayClipFromPool(SwordSwingAudioClip, _actionSources, SwordSwingAudioVolume * GlobalAudioVolume);
+        }
+
+        // Called by the Animation Event in the 'Gunslinger_Attack04' clip
+        public void EndAttackDamageWindow()
+        {
+            if (swordController != null)
+            {
+                // Delegates the command to the actual sword script (the Spoke)
+                swordController.DisableCollider();
+
+                // Sword switching logic
+                if (swordInHand != null)
+                    swordInHand.SetActive(false); // Hide the functional sword
+
+                if (swordOnBack != null)
+                    swordOnBack.SetActive(true);  // Show the cosmetic sword again
+            }
+            // No error needed here, as it's fine if the sword is null while ending the attack.
+        }
+        public void EndAttack()
+        {
+            _isAttacking = false;
         }
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
@@ -483,6 +662,35 @@ namespace StarterAssets
                 GroundedRadius);
         }
 
+        // NEW HELPER FUNCTION: Plays a clip on the next available source from the provided pool.
+        private void PlayClipFromPool(AudioClip clip, AudioSource[] sourcePool, float volume)
+        {
+            if (clip == null || sourcePool == null || sourcePool.Length == 0) return;
+
+            // Cycle through the available sources to find one that is not playing
+            AudioSource availableSource = null;
+            foreach (var source in sourcePool)
+            {
+                if (!source.isPlaying)
+                {
+                    availableSource = source;
+                    break;
+                }
+            }
+
+            // Fallback: If no source is free, reuse the first one (will cut off previous sound)
+            if (availableSource == null)
+            {
+                availableSource = sourcePool[0];
+            }
+
+            // Configure and play the sound
+            availableSource.clip = clip;
+            availableSource.volume = volume;
+            availableSource.transform.position = transform.TransformPoint(_controller.center); // Set spatial position
+            availableSource.Play();
+        }
+
         private void OnFootstep(AnimationEvent animationEvent)
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
@@ -490,7 +698,7 @@ namespace StarterAssets
                 if (FootstepAudioClips.Length > 0)
                 {
                     var index = Random.Range(0, FootstepAudioClips.Length);
-                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                    PlayClipFromPool(FootstepAudioClips[index], _footstepSources, GlobalAudioVolume);
                 }
             }
         }
@@ -499,7 +707,7 @@ namespace StarterAssets
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
-                AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+                PlayClipFromPool(LandingAudioClip, _footstepSources, GlobalAudioVolume);
             }
         }
     }
