@@ -315,7 +315,6 @@ Shader "Universal Render Pipeline/Toon" {
             #pragma multi_compile_fog
 
             #pragma multi_compile   _IS_PASS_FWDBASE
-            #pragma multi_compile   _ENVIRONMENTREFLECTIONS_OFF
             // DoubleShadeWithFeather and ShadingGradeMap use different fragment shader.  
             #pragma shader_feature _ _SHADINGGRADEMAP
 
