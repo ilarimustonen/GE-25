@@ -637,15 +637,29 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.115025505
-        functionName: StartAttack
+      - time: 0.12080167
+        functionName: Unsheathe
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: d94e36335a22d8a49989f6fa29e1036b, type: 3}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.85240024
-        functionName: EndAttackDamageWindow
+      - time: 0.40892634
+        functionName: HitboxActivate
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: d94e36335a22d8a49989f6fa29e1036b, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.46302316
+        functionName: HitboxDeactivate
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: d94e36335a22d8a49989f6fa29e1036b, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.8480096
+        functionName: Sheathe
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: d94e36335a22d8a49989f6fa29e1036b, type: 3}
         floatParameter: 0

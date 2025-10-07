@@ -538,12 +538,25 @@ namespace StarterAssets
             // Apply force to each collider that has a Rigidbody
             foreach (Collider hit in colliders)
             {
-                Rigidbody rb = hit.GetComponent<Rigidbody>();
+                // Try to get the specialized enemy controller first
+                EnemyAIController enemyAI = hit.GetComponent<EnemyAIController>();
 
-                if (rb != null)
+                if (enemyAI != null)
                 {
-                    // AddExplosionForce is perfect for this!
-                    rb.AddExplosionForce(ForceBlastForce, transform.position, ForceBlastRadius, ForceBlastUpwardsModifier);
+                    // --- IT'S AN ENEMY ---
+                    // Let its own script handle the complex knockback logic (NavMesh, Animator, etc.)
+                    enemyAI.ApplyKnockback(transform.position, ForceBlastForce, ForceBlastRadius, ForceBlastUpwardsModifier);
+                }
+                else
+                {
+                    // --- IT'S NOT AN ENEMY ---
+                    // Check if it's a simple physics object (like a barrel or crate)
+                    Rigidbody rb = hit.GetComponent<Rigidbody>();
+                    if (rb != null && !rb.isKinematic) // Only apply force to non-kinematic rigidbodies
+                    {
+                        // Apply the generic explosion force
+                        rb.AddExplosionForce(ForceBlastForce, transform.position, ForceBlastRadius, ForceBlastUpwardsModifier, ForceMode.Impulse);
+                    }
                 }
 
                 HitboxComponent hitbox = hit.GetComponent<HitboxComponent>();
@@ -603,7 +616,7 @@ namespace StarterAssets
         }
 
         // Called by the Animation Event in the 'Gunslinger_Attack04' clip
-        public void StartAttack()
+        public void Unsheathe()
         {
             if (swordOnBack != null)
                 swordOnBack.SetActive(false); // Hide the cosmetic sword
@@ -611,22 +624,31 @@ namespace StarterAssets
             if (swordInHand != null)
                 swordInHand.SetActive(true);  // Show the functional sword in the hand
 
-            if (swordController != null)
-            {
-                // Delegates the command to the actual sword script.
-                swordController.EnableCollider();
-            }
             PlayClipFromPool(SwordSwingAudioClip, _actionSources, SwordSwingAudioVolume * GlobalAudioVolume);
         }
-
-        // Called by the Animation Event in the 'Gunslinger_Attack04' clip
-        public void EndAttackDamageWindow()
+        public void HitboxActivate()
         {
             if (swordController != null)
             {
-                // Delegates the command to the actual sword script (the Spoke)
-                swordController.DisableCollider();
+                // Delegates the command to the actual sword script.
+                swordController.HitboxActivate();
+            }
+        }
 
+        public void HitboxDeactivate()
+        {
+            if (swordController != null)
+            {
+                // Delegates the command to the actual sword script.
+                swordController.HitboxDeactivate();
+            }
+        }
+
+
+        public void Sheathe()
+        {
+            if (swordController != null)
+            {
                 // Sword switching logic
                 if (swordInHand != null)
                     swordInHand.SetActive(false); // Hide the functional sword
@@ -634,13 +656,11 @@ namespace StarterAssets
                 if (swordOnBack != null)
                     swordOnBack.SetActive(true);  // Show the cosmetic sword again
             }
-            // No error needed here, as it's fine if the sword is null while ending the attack.
         }
         public void EndAttack()
         {
             _isAttacking = false;
         }
-
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;

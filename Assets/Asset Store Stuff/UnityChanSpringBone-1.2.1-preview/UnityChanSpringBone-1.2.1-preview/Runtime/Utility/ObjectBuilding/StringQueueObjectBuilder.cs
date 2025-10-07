@@ -34,10 +34,14 @@ namespace Unity.Animations.SpringBones
                 if (parentName.Length > 0)
                 {
                     var children = gameObject.GetComponentsInChildren<Transform>(true);
-                    newParent = Object.FindObjectsOfType<Transform>()
+
+                    // --- FIXED ---
+                    // Replaced FindObjectsOfType with the more performant, modern FindObjectsByType.
+                    newParent = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None)
                         .Where(item => item.name == parentName
                             && !children.Contains(item))
                         .FirstOrDefault();
+
                     if (newParent == null)
                     {
                         Debug.LogError("Valid parent not found: " + parentName);
@@ -278,13 +282,24 @@ namespace Unity.Animations.SpringBones
 
             private static Component FindComponent(System.Type type, GameObject root, string objectName)
             {
-                IEnumerable<Component> sourceComponents = (root == null)
-                    ? Object.FindObjectsOfType(type)
+                IEnumerable<Component> sourceComponents;
+                if (root == null)
+                {
+                    // --- FIXED ---
+                    // Replaced obsolete Object.FindObjectsOfType(type) with the modern equivalent.
+                    // Added FindObjectsInactive.Include to match the behavior of GetComponentsInChildren(type, true) used below.
+                    sourceComponents = Object.FindObjectsByType(type, FindObjectsInactive.Include, FindObjectsSortMode.None)
                         .Select(item => item as Component)
-                        .Where(item => item != null)
-                    : root.GetComponentsInChildren(type, true);
+                        .Where(item => item != null);
+                }
+                else
+                {
+                    sourceComponents = root.GetComponentsInChildren(type, true);
+                }
+
                 var matchingComponent = sourceComponents
                     .FirstOrDefault(child => child.name == objectName);
+
                 if (matchingComponent == null)
                 {
                     Debug.LogError("Component not found: " + objectName + "  Type: " + type.ToString());

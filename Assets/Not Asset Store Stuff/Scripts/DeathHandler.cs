@@ -1,5 +1,6 @@
 using UnityEngine;
 using Ilumisoft.HealthSystem;
+using UnityEngine.AI;
 
 // This component requires a HealthComponent and an Animator to be on the same GameObject
 [RequireComponent(typeof(HealthComponent))]
@@ -46,29 +47,25 @@ public class DeathHandler : MonoBehaviour
     /// </summary>
     private void HandleDeath()
     {
-        Debug.Log(gameObject.name + " has died! Playing death animation.");
-
         // 1. Disable components that shouldn't run during/after death (e.g., movement, AI).
-        // Example: If you have a character controller or an AI script
-        // GetComponent<CharacterController>()?.enabled = false;
-        // GetComponent<NavMeshAgent>()?.enabled = false; 
 
-        // 2. Play the death animation.
+        NavMeshAgent agent = gameObject.GetComponent<NavMeshAgent>();
+        if (agent != null) agent.enabled = false;
+
+        EnemyAIController enemyAIController = gameObject.GetComponent<EnemyAIController>();
+        if (enemyAIController != null) enemyAIController.enabled = false;
+
+        // 2. Play the death animation, which will calls DisableGameObject via Animation Events.
         animator.SetTrigger(deathAnimationTrigger);
-
-        // NOTE: The actual disabling of the GameObject is handled by the 
-        // public method DisableGameObject, which should be called by an Animation Event 
-        // at the end of the death animation.
     }
 
     /// <summary>
     /// This method is designed to be called by an Animation Event 
     /// at the end of the death animation. It disables the GameObject.
     /// </summary>
+
     public void DisableGameObject()
     {
-        Debug.Log(gameObject.name + " death animation finished. Disabling GameObject.");
-
         // 3. Disable the root GameObject (which effectively "removes" it from the scene 
         // until it's re-enabled, perhaps by a pooling system).
         gameObject.SetActive(false);

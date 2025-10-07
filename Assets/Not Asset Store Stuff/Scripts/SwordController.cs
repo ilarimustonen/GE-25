@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Ilumisoft.HealthSystem; // Use the namespace from your health system asset
+using Ilumisoft.HealthSystem;
 
 public class SwordController : MonoBehaviour
 {
@@ -8,7 +8,10 @@ public class SwordController : MonoBehaviour
     public float Damage = 25f;
 
     private Collider _swordCollider;
-    private List<Collider> _hitTargets; // List to track targets hit in a single swing
+    private List<HealthComponent> _hitTargets;
+
+    // --- NEW: Tracks if the sword is currently swinging and active ---
+    private bool _isHitboxActive = false;
 
     private Collider DamageCollider
     {
@@ -16,12 +19,11 @@ public class SwordController : MonoBehaviour
         {
             if (_swordCollider == null)
             {
-                // This is the safety check that runs just-in-time
                 _swordCollider = GetComponent<CapsuleCollider>();
 
                 if (_swordCollider == null)
                 {
-                    Debug.LogError("FATAL: SwordController could not find a Capsule Collider on this object.", this);
+                    Debug.LogError("FATAL: SwordController could not find a Collider on this object.", this);
                 }
             }
             return _swordCollider;
@@ -31,50 +33,71 @@ public class SwordController : MonoBehaviour
 
     private void Awake()
     {
-        // Initialization for other non-component variables is safe here
-        _hitTargets = new List<Collider>();
+        _hitTargets = new List<HealthComponent>();
+
+        // Force collider initialization to prevent NullRef
+        Collider temp = DamageCollider;
+
+        // Ensure the collider starts disabled
+        if (DamageCollider != null)
+        {
+            DamageCollider.enabled = false;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // If we have already hit this target in the current swing, ignore it
-        if (_hitTargets.Contains(other))
+        // Safety check: Don't process hits if we are not marked as active
+        if (!_isHitboxActive) return;
+
+        HealthComponent targetHealth = other.GetComponentInParent<HealthComponent>();
+
+        if (targetHealth == null)
         {
             return;
         }
 
-        // First, try to find a HitboxComponent on the object we struck.
-        if (other.TryGetComponent<HitboxComponent>(out var hitbox))
+        if (_hitTargets.Contains(targetHealth))
         {
-            hitbox.ApplyDamage(Damage);
-            _hitTargets.Add(other);
-            Debug.Log($"Hit {other.name}'s hitbox, dealing {Damage} damage.");
+            Debug.Log("Prevented re-hit on: " + targetHealth.gameObject.name, this);
+            return;
         }
-        // If no hitbox is found, check for a root HealthComponent as a fallback.
-        else if (other.TryGetComponent<HealthComponent>(out var health))
-        {
-            health.ApplyDamage(Damage);
-            _hitTargets.Add(other);
-            Debug.Log($"Hit {other.name}, dealing {Damage} damage.");
-        }
+
+        // Apply Damage and track the target.
+        Debug.Log("APPLIED DAMAGE to: " + targetHealth.gameObject.name, this);
+        targetHealth.ApplyDamage(Damage);
+
+        _hitTargets.Add(targetHealth);
     }
 
     // Called by an Animation Event at the start of the swing
-    public void EnableCollider()
+    public void HitboxActivate()
     {
-        _hitTargets.Clear();
-        if (_swordCollider != null)
+        // --- MODIFIED LOGIC ---
+        // ONLY clear the list if the hitbox is NOT already active.
+        // This stops multiple activation events from resetting the list mid-swing.
+        if (!_isHitboxActive)
         {
-            _swordCollider.enabled = true;
+            _hitTargets.Clear();
         }
+
+        if (DamageCollider != null)
+        {
+            DamageCollider.enabled = true;
+        }
+
+        _isHitboxActive = true;
     }
 
     // Called by an Animation Event at the end of the swing
-    public void DisableCollider()
+    public void HitboxDeactivate()
     {
-        if (_swordCollider != null)
+        if (DamageCollider != null)
         {
-            _swordCollider.enabled = false;
+            DamageCollider.enabled = false;
         }
+
+        // --- NEW --- Mark the hitbox as inactive
+        _isHitboxActive = false;
     }
 }

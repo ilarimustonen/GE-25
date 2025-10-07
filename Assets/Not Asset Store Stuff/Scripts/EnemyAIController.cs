@@ -1,58 +1,61 @@
 using UnityEngine;
-using UnityEngine.AI; // Required for NavMeshAgent
+using UnityEngine.AI;
+using System.Collections; // Required for Coroutines
 
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 public class EnemyAIController : MonoBehaviour
 {
-    // --- Public Fields (Editable in Inspector) ---
+    // ... (Your existing Header fields) ...
     [Header("AI Settings")]
     public float detectionRadius = 15f;
-    public float attackRadius = 2f;
-
-    [Tooltip("A layer mask to specify what can block the AI's line of sight.")]
+    public float attackRadius = 1f;
     public LayerMask obstacleMask;
-
     [Header("Attack Settings")]
-    public float attackCooldown = 2f; // Time in seconds between attacks
+    public float attackCooldown = 1f;
+
+    // --- NEW KNOCKBACK SETTINGS ---
+    [Header("Knockback Settings")]
+    [Tooltip("The radius for the grounded check sphere.")]
+    public float GroundedRadius = 0.3f;
+    [Tooltip("The layers that are considered ground.")]
+    public LayerMask GroundLayers;
+    [Tooltip("Vertical offset for the grounded check sphere from the object's pivot.")]
+    public float GroundedOffset = 0f;
+    // ----------------------------
 
     // --- Private Fields ---
     private Transform player;
     private NavMeshAgent agent;
-    private Animator animator; // Optional: for animations
+    private Animator animator;
+    private Rigidbody rb;
 
     // State Machine
-    private enum State { Idle, Chasing, Attacking }
+    private enum State { Idle, Chasing, Attacking, KnockedBack }
     private State currentState;
 
-    // Attack timing
     private float lastAttackTime;
 
     void Start()
     {
-        // Find the player GameObject by its tag
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        if (playerObject != null)
-        {
-            player = playerObject.transform;
-        }
-        else
-        {
-            Debug.LogError("Player not found! Make sure your player has the 'Player' tag.");
-        }
+        if (playerObject != null) player = playerObject.transform;
+        else Debug.LogError("Player not found!");
 
-        // Get components attached to this GameObject
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>(); // Can be null if no animator
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
 
-        // Set initial state
+        rb.isKinematic = true;
+
+        agent.stoppingDistance = attackRadius;
         currentState = State.Idle;
     }
 
     void Update()
     {
-        if (player == null) return; // Don't run AI if there's no player
+        if (player == null || currentState == State.KnockedBack) return;
 
-        // The core of our AI: a state machine
         switch (currentState)
         {
             case State.Idle:
@@ -64,17 +67,112 @@ public class EnemyAIController : MonoBehaviour
             case State.Attacking:
                 HandleAttackingState();
                 break;
+            case State.KnockedBack:
+                // Logic is handled by the coroutine
+                break;
         }
     }
 
-    // --- State Handlers ---
+    public void ApplyKnockback(Vector3 explosionPosition, float explosionForce, float explosionRadius, float explosionUpwardsModifier)
+    {
+        if (currentState == State.KnockedBack) return;
+        StartCoroutine(KnockbackRoutine(explosionPosition, explosionForce, explosionRadius, explosionUpwardsModifier));
+    }
 
+    // --- NEW HELPER METHOD FOR GROUND CHECK ---
+    private bool IsGrounded()
+    {
+        // Calculate the sphere position with the vertical offset
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
+
+        // Use Physics.CheckSphere to see if the feet are touching the ground layers
+        return Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+    }
+    // ----------------------------------------
+
+    private IEnumerator KnockbackRoutine(Vector3 explosionPosition, float explosionForce, float explosionRadius, float explosionUpwardsModifier)
+    {
+        currentState = State.KnockedBack;
+
+        // --- GRACEFUL SHUTDOWN OF NAVMESHAGENT ---
+        agent.isStopped = true;
+        agent.velocity = Vector3.zero;
+        agent.enabled = false;
+
+        // --- GIVE CONTROL TO PHYSICS ---
+        rb.isKinematic = false;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+        bool wasRootMotionEnabled = animator.applyRootMotion;
+        if (wasRootMotionEnabled)
+        {
+            animator.applyRootMotion = false;
+        }
+
+        // --- APPLY THE FORCE ---
+        rb.AddExplosionForce(explosionForce, explosionPosition, explosionRadius, explosionUpwardsModifier, ForceMode.Impulse);
+
+        // Allow physics to calculate force application before we start checking
+        yield return new WaitForFixedUpdate();
+
+        // --- MODIFIED WAIT FOR KNOCKBACK TO END ---
+        float timer = 0f;
+        float knockbackDuration = 5.0f; // Increased timeout to prevent permanent lockup if something goes wrong
+        float velocityThreshold = 0.5f; // Slightly increased threshold for better responsiveness after landing
+
+        while (timer < knockbackDuration)
+        {
+            // NEW CONDITION: Only break if it is grounded AND has slowed down.
+            if (IsGrounded() && rb.linearVelocity.magnitude < velocityThreshold)
+            {
+                break;
+            }
+
+            timer += Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+
+        // --- RETURN CONTROL TO NAVMESHAGENT ---
+        rb.isKinematic = true;
+        rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        if (wasRootMotionEnabled)
+        {
+            animator.applyRootMotion = true;
+        }
+
+        agent.enabled = true;
+
+        // --- IMPORTANT: WARP TO THE NEW POSITION ---
+        if (agent.isOnNavMesh)
+        {
+            agent.Warp(transform.position);
+        }
+        else
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 5.0f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position);
+            }
+            else
+            {
+                Debug.LogWarning(gameObject.name + " was knocked too far from the NavMesh.");
+            }
+        }
+
+        agent.isStopped = false;
+        currentState = State.Chasing;
+    }
+
+
+    // ... (The rest of your methods like HandleIdleState, HandleChasingState, etc., remain the same) ...
+
+    #region State Handlers and Helpers
     private void HandleIdleState()
     {
-        // Optional: Trigger idle animation
-        if (animator != null) animator.SetBool("IsWalking", false);
-
-        // Check if the player is within detection radius and has line of sight
+        if (animator != null) animator.SetBool("IsIdle", true);
+        agent.isStopped = true;
         if (IsPlayerInSight())
         {
             currentState = State.Chasing;
@@ -83,22 +181,15 @@ public class EnemyAIController : MonoBehaviour
 
     private void HandleChasingState()
     {
-        // Optional: Trigger walking/running animation
-        if (animator != null) animator.SetBool("IsWalking", true);
-
-        // Move towards the player
+        if (animator != null) animator.SetBool("IsIdle", false);
+        agent.isStopped = false;
         agent.SetDestination(player.position);
-
-        // If player is out of sight, go back to idle
         if (!IsPlayerInSight())
         {
             currentState = State.Idle;
-            agent.ResetPath(); // Stop moving
             return;
         }
-
-        // If player is within attack range, switch to attacking state
-        if (Vector3.Distance(transform.position, player.position) <= attackRadius)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             currentState = State.Attacking;
         }
@@ -106,76 +197,47 @@ public class EnemyAIController : MonoBehaviour
 
     private void HandleAttackingState()
     {
-        // Stop moving to attack
-        agent.ResetPath();
-
-        // Optional: Stop walking animation
-        if (animator != null) animator.SetBool("IsWalking", false);
-
-        // Make sure the enemy is facing the player
-        transform.LookAt(player);
-
-        // Check if enough time has passed since the last attack
+        if (animator != null) animator.SetBool("IsIdle", true);
+        agent.isStopped = true;
+        FaceTarget();
         if (Time.time >= lastAttackTime + attackCooldown)
         {
             Attack();
         }
-
-        // If the player moves out of attack range, go back to chasing
         if (Vector3.Distance(transform.position, player.position) > attackRadius)
         {
             currentState = State.Chasing;
         }
     }
 
-    // --- Helper Methods ---
+    private void FaceTarget()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * agent.angularSpeed);
+    }
 
     private bool IsPlayerInSight()
     {
-        // First check: Is player within the detection radius?
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        if (distanceToPlayer > detectionRadius)
-        {
-            return false;
-        }
-
-        // Second check: Is there a clear line of sight?
+        if (distanceToPlayer > detectionRadius) return false;
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
-        // We use a Raycast to check for obstacles between the enemy and the player.
-        if (Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleMask))
-        {
-            // If the raycast hits an obstacle, there is no line of sight.
-            return false;
-        }
-
-        // If both checks pass, the player is in sight.
+        if (Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleMask)) return false;
         return true;
     }
 
     private void Attack()
     {
-        // This is where your attack logic goes.
-        // e.g., dealing damage, playing an attack animation, creating a projectile.
-
-        // Optional: Trigger attack animation
         if (animator != null) animator.SetTrigger("Attack");
-
-        Debug.Log(gameObject.name + " is attacking " + player.name);
-
-        // --- PLACE YOUR DAMAGE LOGIC HERE ---
-        // Example: player.GetComponent<PlayerHealth>().TakeDamage(10);
-
-        // Record the time of this attack to manage cooldown
         lastAttackTime = Time.time;
     }
 
-    // Optional: Draw gizmos in the editor to visualize the AI's ranges
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
-
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
+    #endregion
 }
