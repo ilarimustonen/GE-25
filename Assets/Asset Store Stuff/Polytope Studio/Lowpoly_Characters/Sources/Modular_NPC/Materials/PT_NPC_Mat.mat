@@ -286,11 +286,11 @@ Material:
     - _utsVersionY: 5
     - _utsVersionZ: 1
     m_Colors:
-    - _1st_ShadeColor: {r: 0.5169811, g: 0.5169811, b: 0.5169811, a: 1}
+    - _1st_ShadeColor: {r: 0.20751157, g: 0.23166965, b: 0.3283019, a: 1}
     - _2nd_ShadeColor: {r: 0.3660378, g: 0.3660378, b: 0.3660378, a: 1}
     - _AngelRing_Color: {r: 1, g: 1, b: 1, a: 1}
     - _Ap_RimLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.82641506, g: 0.82641506, b: 0.82641506, a: 1}
     - _CEL1COLOR: {r: 1, g: 1, b: 1, a: 0}
     - _CEL2COLOR: {r: 1, g: 1, b: 1, a: 0}
     - _CEL3COLOR: {r: 1, g: 1, b: 1, a: 0}
@@ -303,7 +303,7 @@ Material:
     - _CLOTH4COLOR: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 0}
     - _CLOTH4COLOR1: {r: 0.2011392, g: 0.3773585, b: 0.3739074, a: 0}
     - _COATOFARMSCOLOR: {r: 1, g: 0, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.82641506, g: 0.82641506, b: 0.82641506, a: 1}
     - _ColorShift: {r: 0, g: 0, b: 0, a: 1}
     - _EYESCOLOR: {r: 0.003935064, g: 0.009433985, b: 0.0017354974, a: 1}
     - _EYESCOLOR1: {r: 0.0734529, g: 0.1320755, b: 0.05046281, a: 1}
