@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 #if UNITY_LOCALIZATION
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
@@ -14,13 +15,13 @@ namespace cherrydev
     public class DialogBehaviour : MonoBehaviour
     {
         [SerializeField] private float _dialogCharDelay;
-        [SerializeField] private List<KeyCode> _nextSentenceKeyCodes;
+        [SerializeField] private List<Key> _nextSentenceKeys;
         [SerializeField] private bool _isCanSkippingText = true;
 #if UNITY_LOCALIZATION
         [SerializeField] private bool _reloadTextOnLanguageChange = true;
 #endif
 
-        [Space(10)] 
+        [Space(10)]
         [SerializeField] private UnityEvent _onDialogStarted;
         [SerializeField] private UnityEvent _onDialogFinished;
 
@@ -33,7 +34,7 @@ namespace cherrydev
         public ModifyVariableNode CurrentModifyVariableNode { get; private set; }
         public VariableConditionNode CurrentVariableConditionNode { get; private set; }
         public ExternalFunctionNode CurrentExternalFunctionNode { get; private set; }
-        
+
         public UnityEvent OnDialogStarted => _onDialogStarted;
         public UnityEvent OnDialogFinished => _onDialogFinished;
 
@@ -76,7 +77,7 @@ namespace cherrydev
 
         public event Action<VariableConditionNode> VariableConditionNodeActivated;
         public event Action<string, bool> VariableConditionEvaluated;
-        
+
         private event Action<DialogVariablesHandler> _dialogFinished;
 
 
@@ -156,10 +157,10 @@ namespace cherrydev
         public void SetCharDelay(float value) => _dialogCharDelay = value;
 
         /// <summary>
-        /// Setting nextSentenceKeyCodes
+        /// Setting nextSentenceKeys using Key enum from Input System
         /// </summary>
-        /// <param name="keyCodes"></param>
-        public void SetNextSentenceKeyCodes(List<KeyCode> keyCodes) => _nextSentenceKeyCodes = keyCodes;
+        /// <param name="keys"></param>
+        public void SetNextSentenceKeys(List<Key> keys) => _nextSentenceKeys = keys;
 
         /// <summary>
         /// Start a dialog
@@ -168,8 +169,8 @@ namespace cherrydev
         /// <param name="onVariablesHandlerInitialized"></param>
         /// <param name="onDialogFinished"></param>
         public void StartDialog(
-            DialogNodeGraph dialogNodeGraph, 
-            Action<DialogVariablesHandler> onVariablesHandlerInitialized = null, 
+            DialogNodeGraph dialogNodeGraph,
+            Action<DialogVariablesHandler> onVariablesHandlerInitialized = null,
             Action<DialogVariablesHandler> onDialogFinished = null)
         {
             _isDialogStarted = true;
@@ -185,10 +186,10 @@ namespace cherrydev
             _currentNodeGraph = dialogNodeGraph;
 
             InitializeVariablesHandler(dialogNodeGraph);
-            
+
             onVariablesHandlerInitialized?.Invoke(_variablesHandler);
             _dialogFinished = onDialogFinished;
-            
+
             DefineFirstNode(dialogNodeGraph);
             CalculateMaxAmountOfAnswerButtons();
             HandleDialogGraphCurrentNode(_currentNode);
@@ -552,7 +553,7 @@ namespace cherrydev
             _isDialogStarted = false;
 
             _dialogFinished?.Invoke(_variablesHandler);
-            
+
             foreach (string funcName in _boundFunctionNames)
                 ExternalFunctionsHandler.UnbindExternalFunction(funcName);
 
@@ -658,7 +659,7 @@ namespace cherrydev
             _isCurrentSentenceTyping = false;
             SentenceEnded?.Invoke();
 
-            yield return new WaitUntil(() => CheckNextSentenceKeyCodes() && IsActive);
+            yield return new WaitUntil(() => CheckNextSentenceKeys() && IsActive);
 
             CheckForDialogNextNode();
         }
@@ -733,19 +734,23 @@ namespace cherrydev
             if (!_isDialogStarted || !_isCanSkippingText)
                 return;
 
-            if (CheckNextSentenceKeyCodes() && !_isCurrentSentenceSkipped)
+            if (CheckNextSentenceKeys() && !_isCurrentSentenceSkipped)
                 _isCurrentSentenceSkipped = true;
         }
 
         /// <summary>
-        /// Checking whether at least one key from the nextSentenceKeyCodes was pressed
+        /// Checking whether at least one key from the nextSentenceKeys was pressed
         /// </summary>
         /// <returns></returns>
-        private bool CheckNextSentenceKeyCodes()
+        private bool CheckNextSentenceKeys()
         {
-            for (int i = 0; i < _nextSentenceKeyCodes.Count; i++)
+            var keyboard = Keyboard.current;
+            if (keyboard == null)
+                return false;
+
+            for (int i = 0; i < _nextSentenceKeys.Count; i++)
             {
-                if (Input.GetKeyDown(_nextSentenceKeyCodes[i]))
+                if (keyboard[_nextSentenceKeys[i]].wasPressedThisFrame)
                     return true;
             }
 

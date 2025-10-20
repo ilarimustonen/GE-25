@@ -59,12 +59,10 @@ public class SwordController : MonoBehaviour
 
         if (_hitTargets.Contains(targetHealth))
         {
-            Debug.Log("Prevented re-hit on: " + targetHealth.gameObject.name, this);
             return;
         }
 
         // Apply Damage and track the target.
-        Debug.Log("APPLIED DAMAGE to: " + targetHealth.gameObject.name, this);
         targetHealth.ApplyDamage(Damage);
 
         _hitTargets.Add(targetHealth);

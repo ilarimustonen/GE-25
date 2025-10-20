@@ -282,9 +282,8 @@ namespace StarterAssets
                     _isAttacking = true;
                     HandleAttack();
                 }
-
-                JumpAndGravity();
                 GroundedCheck();
+                JumpAndGravity();
                 Move();
         }
 
@@ -465,7 +464,7 @@ namespace StarterAssets
             }
 
             // --- Gravity and Fall State ---
-            if (Grounded)
+            else if (Grounded)
             {
                 // Reset the fall timeout timer
                 _fallTimeoutDelta = FallTimeout;
