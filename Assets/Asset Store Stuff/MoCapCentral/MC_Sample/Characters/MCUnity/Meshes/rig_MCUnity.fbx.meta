@@ -1,7 +1,14 @@
 fileFormatVersion: 2
 guid: 5958d20394757cd4092feaf67ab80b97
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291284
+  packageName: MC Sample - Believable 3D Animations by MoCap Central
+  packageVersion: 1.1.0
+  assetPath: Assets/MoCapCentral/MC_Sample/Characters/MCUnity/Meshes/rig_MCUnity.fbx
+  uploadId: 680140
 ModelImporter:
-  serializedVersion: 22200
+  serializedVersion: 24200
   internalIDToNameTable: []
   externalObjects:
   - first:
@@ -26,8 +33,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -68,6 +73,9 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
@@ -308,7 +316,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: index_01_l
+    - boneName: index_metacarpal_l
       humanName: Left Index Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -316,7 +324,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: index_02_l
+    - boneName: index_01_l
       humanName: Left Index Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -324,7 +332,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: index_03_l
+    - boneName: index_02_l
       humanName: Left Index Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -332,7 +340,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: middle_01_l
+    - boneName: middle_metacarpal_l
       humanName: Left Middle Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -340,7 +348,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: middle_02_l
+    - boneName: middle_01_l
       humanName: Left Middle Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -348,7 +356,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: middle_03_l
+    - boneName: middle_02_l
       humanName: Left Middle Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -356,7 +364,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: ring_01_l
+    - boneName: ring_metacarpal_l
       humanName: Left Ring Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -364,7 +372,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: ring_02_l
+    - boneName: ring_01_l
       humanName: Left Ring Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -372,7 +380,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: ring_03_l
+    - boneName: ring_02_l
       humanName: Left Ring Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -380,7 +388,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: pinky_01_l
+    - boneName: pinky_metacarpal_l
       humanName: Left Little Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -388,7 +396,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: pinky_02_l
+    - boneName: pinky_01_l
       humanName: Left Little Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -396,7 +404,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: pinky_03_l
+    - boneName: pinky_02_l
       humanName: Left Little Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -428,7 +436,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: index_01_r
+    - boneName: index_metacarpal_r
       humanName: Right Index Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -436,7 +444,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: index_02_r
+    - boneName: index_01_r
       humanName: Right Index Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -444,7 +452,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: index_03_r
+    - boneName: index_02_r
       humanName: Right Index Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -452,7 +460,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: middle_01_r
+    - boneName: middle_metacarpal_r
       humanName: Right Middle Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -460,7 +468,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: middle_02_r
+    - boneName: middle_01_r
       humanName: Right Middle Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -468,7 +476,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: middle_03_r
+    - boneName: middle_02_r
       humanName: Right Middle Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -476,7 +484,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: ring_01_r
+    - boneName: ring_metacarpal_r
       humanName: Right Ring Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -484,7 +492,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: ring_02_r
+    - boneName: ring_01_r
       humanName: Right Ring Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -492,7 +500,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: ring_03_r
+    - boneName: ring_02_r
       humanName: Right Ring Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -500,7 +508,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: pinky_01_r
+    - boneName: pinky_metacarpal_r
       humanName: Right Little Proximal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -508,7 +516,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: pinky_02_r
+    - boneName: pinky_01_r
       humanName: Right Little Intermediate
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -516,7 +524,7 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
-    - boneName: pinky_03_r
+    - boneName: pinky_02_r
       humanName: Right Little Distal
       limit:
         min: {x: 0, y: 0, z: 0}
@@ -1016,7 +1024,7 @@ ModelImporter:
     hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  autoGenerateAvatarMappingIfUnspecified: 1
+  autoGenerateAvatarMappingIfUnspecified: 0
   animationType: 3
   humanoidOversampling: 1
   avatarSetup: 1
@@ -1027,10 +1035,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 291284
-  packageName: MC Sample - Believable 3D Animations by MoCap Central
-  packageVersion: 1.1.0
-  assetPath: Assets/MoCapCentral/MC_Sample/Characters/MCUnity/Meshes/rig_MCUnity.fbx
-  uploadId: 680140

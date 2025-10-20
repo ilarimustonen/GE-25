@@ -1,179 +1,522 @@
 fileFormatVersion: 2
 guid: 8e80daf6fe40ed5449c72cc2926fa13b
+AssetOrigin:
+  serializedVersion: 1
+  productId: 145087
+  packageName: Frank RPG Gunslinger
+  packageVersion: 1.0
+  assetPath: Assets/Frank_RPG_Gunslinger/Assets/Meshes/femalexxx.fbx
+  uploadId: 501695
 ModelImporter:
-  serializedVersion: 22
-  fileIDToRecycleName:
-    100000: Chest
-    100002: Clavicle_L
-    100004: Clavicle_R
-    100006: female_accessory
-    100008: female_arm
-    100010: female_chest
-    100012: female_feet
-    100014: female_forearm
-    100016: female_hair
-    100018: female_hat
-    100020: female_head
-    100022: female_legs
-    100024: female_pants
-    100026: female_pelvis
-    100028: female_shirt
-    100030: female_shoes
-    100032: female_spine
-    100034: //RootNode
-    100036: Foot_L
-    100038: Foot_R
-    100040: Forearm_L
-    100042: Forearm_R
-    100044: Hand_L
-    100046: Hand_R
-    100048: Head
-    100050: Head_end
-    100052: hips
-    100054: Index_1_L
-    100056: Index_1_R
-    100058: Index_2_L
-    100060: Index_2_R
-    100062: Index_3_L
-    100064: Index_3_L_end
-    100066: Index_3_R
-    100068: Index_3_R_end
-    100070: Little_1_L
-    100072: Little_1_R
-    100074: Little_2_R
-    100076: Little_3_L
-    100078: Little_3_L_end
-    100080: Little_3_R
-    100082: Little_3_R_end
-    100084: little_l_2
-    100086: Middle_1_L
-    100088: Middle_1_R
-    100090: Middle_2_L
-    100092: Middle_2_R
-    100094: Middle_3_L
-    100096: Middle_3_L_end
-    100098: Middle_3_R
-    100100: Middle_3_R_end
-    100102: Neck
-    100104: Ring_1_L
-    100106: Ring_1_R
-    100108: Ring_2_L
-    100110: Ring_2_R
-    100112: Ring_3_L
-    100114: Ring_3_L_end
-    100116: Ring_3_R
-    100118: Ring_3_R_end
-    100120: Root
-    100122: Shin_L
-    100124: Shin_R
-    100126: Shoulder_L
-    100128: Shoulder_R
-    100130: Spine1
-    100132: Spine2
-    100134: Thigh_L
-    100136: Thigh_R
-    100138: Thumb_1_L
-    100140: Thumb_1_R
-    100142: Thumb_2_L
-    100144: Thumb_2_R
-    100146: Thumb_3_L
-    100148: Thumb_3_L_end
-    100150: Thumb_3_R
-    100152: Thumb_3_R_end
-    100154: Toe_L
-    100156: Toe_L_end
-    100158: Toe_R
-    100160: Toe_R_end
-    100162: U3DMesh
-    400000: Chest
-    400002: Clavicle_L
-    400004: Clavicle_R
-    400006: female_accessory
-    400008: female_arm
-    400010: female_chest
-    400012: female_feet
-    400014: female_forearm
-    400016: female_hair
-    400018: female_hat
-    400020: female_head
-    400022: female_legs
-    400024: female_pants
-    400026: female_pelvis
-    400028: female_shirt
-    400030: female_shoes
-    400032: female_spine
-    400034: //RootNode
-    400036: Foot_L
-    400038: Foot_R
-    400040: Forearm_L
-    400042: Forearm_R
-    400044: Hand_L
-    400046: Hand_R
-    400048: Head
-    400050: Head_end
-    400052: hips
-    400054: Index_1_L
-    400056: Index_1_R
-    400058: Index_2_L
-    400060: Index_2_R
-    400062: Index_3_L
-    400064: Index_3_L_end
-    400066: Index_3_R
-    400068: Index_3_R_end
-    400070: Little_1_L
-    400072: Little_1_R
-    400074: Little_2_R
-    400076: Little_3_L
-    400078: Little_3_L_end
-    400080: Little_3_R
-    400082: Little_3_R_end
-    400084: little_l_2
-    400086: Middle_1_L
-    400088: Middle_1_R
-    400090: Middle_2_L
-    400092: Middle_2_R
-    400094: Middle_3_L
-    400096: Middle_3_L_end
-    400098: Middle_3_R
-    400100: Middle_3_R_end
-    400102: Neck
-    400104: Ring_1_L
-    400106: Ring_1_R
-    400108: Ring_2_L
-    400110: Ring_2_R
-    400112: Ring_3_L
-    400114: Ring_3_L_end
-    400116: Ring_3_R
-    400118: Ring_3_R_end
-    400120: Root
-    400122: Shin_L
-    400124: Shin_R
-    400126: Shoulder_L
-    400128: Shoulder_R
-    400130: Spine1
-    400132: Spine2
-    400134: Thigh_L
-    400136: Thigh_R
-    400138: Thumb_1_L
-    400140: Thumb_1_R
-    400142: Thumb_2_L
-    400144: Thumb_2_R
-    400146: Thumb_3_L
-    400148: Thumb_3_L_end
-    400150: Thumb_3_R
-    400152: Thumb_3_R_end
-    400154: Toe_L
-    400156: Toe_L_end
-    400158: Toe_R
-    400160: Toe_R_end
-    400162: U3DMesh
-    2100000: No Name
-    4300000: U3DMesh
-    9500000: //RootNode
-    13700000: U3DMesh
+  serializedVersion: 24200
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Chest
+  - first:
+      1: 100002
+    second: Clavicle_L
+  - first:
+      1: 100004
+    second: Clavicle_R
+  - first:
+      1: 100006
+    second: female_accessory
+  - first:
+      1: 100008
+    second: female_arm
+  - first:
+      1: 100010
+    second: female_chest
+  - first:
+      1: 100012
+    second: female_feet
+  - first:
+      1: 100014
+    second: female_forearm
+  - first:
+      1: 100016
+    second: female_hair
+  - first:
+      1: 100018
+    second: female_hat
+  - first:
+      1: 100020
+    second: female_head
+  - first:
+      1: 100022
+    second: female_legs
+  - first:
+      1: 100024
+    second: female_pants
+  - first:
+      1: 100026
+    second: female_pelvis
+  - first:
+      1: 100028
+    second: female_shirt
+  - first:
+      1: 100030
+    second: female_shoes
+  - first:
+      1: 100032
+    second: female_spine
+  - first:
+      1: 100034
+    second: //RootNode
+  - first:
+      1: 100036
+    second: Foot_L
+  - first:
+      1: 100038
+    second: Foot_R
+  - first:
+      1: 100040
+    second: Forearm_L
+  - first:
+      1: 100042
+    second: Forearm_R
+  - first:
+      1: 100044
+    second: Hand_L
+  - first:
+      1: 100046
+    second: Hand_R
+  - first:
+      1: 100048
+    second: Head
+  - first:
+      1: 100050
+    second: Head_end
+  - first:
+      1: 100052
+    second: hips
+  - first:
+      1: 100054
+    second: Index_1_L
+  - first:
+      1: 100056
+    second: Index_1_R
+  - first:
+      1: 100058
+    second: Index_2_L
+  - first:
+      1: 100060
+    second: Index_2_R
+  - first:
+      1: 100062
+    second: Index_3_L
+  - first:
+      1: 100064
+    second: Index_3_L_end
+  - first:
+      1: 100066
+    second: Index_3_R
+  - first:
+      1: 100068
+    second: Index_3_R_end
+  - first:
+      1: 100070
+    second: Little_1_L
+  - first:
+      1: 100072
+    second: Little_1_R
+  - first:
+      1: 100074
+    second: Little_2_R
+  - first:
+      1: 100076
+    second: Little_3_L
+  - first:
+      1: 100078
+    second: Little_3_L_end
+  - first:
+      1: 100080
+    second: Little_3_R
+  - first:
+      1: 100082
+    second: Little_3_R_end
+  - first:
+      1: 100084
+    second: little_l_2
+  - first:
+      1: 100086
+    second: Middle_1_L
+  - first:
+      1: 100088
+    second: Middle_1_R
+  - first:
+      1: 100090
+    second: Middle_2_L
+  - first:
+      1: 100092
+    second: Middle_2_R
+  - first:
+      1: 100094
+    second: Middle_3_L
+  - first:
+      1: 100096
+    second: Middle_3_L_end
+  - first:
+      1: 100098
+    second: Middle_3_R
+  - first:
+      1: 100100
+    second: Middle_3_R_end
+  - first:
+      1: 100102
+    second: Neck
+  - first:
+      1: 100104
+    second: Ring_1_L
+  - first:
+      1: 100106
+    second: Ring_1_R
+  - first:
+      1: 100108
+    second: Ring_2_L
+  - first:
+      1: 100110
+    second: Ring_2_R
+  - first:
+      1: 100112
+    second: Ring_3_L
+  - first:
+      1: 100114
+    second: Ring_3_L_end
+  - first:
+      1: 100116
+    second: Ring_3_R
+  - first:
+      1: 100118
+    second: Ring_3_R_end
+  - first:
+      1: 100120
+    second: Root
+  - first:
+      1: 100122
+    second: Shin_L
+  - first:
+      1: 100124
+    second: Shin_R
+  - first:
+      1: 100126
+    second: Shoulder_L
+  - first:
+      1: 100128
+    second: Shoulder_R
+  - first:
+      1: 100130
+    second: Spine1
+  - first:
+      1: 100132
+    second: Spine2
+  - first:
+      1: 100134
+    second: Thigh_L
+  - first:
+      1: 100136
+    second: Thigh_R
+  - first:
+      1: 100138
+    second: Thumb_1_L
+  - first:
+      1: 100140
+    second: Thumb_1_R
+  - first:
+      1: 100142
+    second: Thumb_2_L
+  - first:
+      1: 100144
+    second: Thumb_2_R
+  - first:
+      1: 100146
+    second: Thumb_3_L
+  - first:
+      1: 100148
+    second: Thumb_3_L_end
+  - first:
+      1: 100150
+    second: Thumb_3_R
+  - first:
+      1: 100152
+    second: Thumb_3_R_end
+  - first:
+      1: 100154
+    second: Toe_L
+  - first:
+      1: 100156
+    second: Toe_L_end
+  - first:
+      1: 100158
+    second: Toe_R
+  - first:
+      1: 100160
+    second: Toe_R_end
+  - first:
+      1: 100162
+    second: U3DMesh
+  - first:
+      4: 400000
+    second: Chest
+  - first:
+      4: 400002
+    second: Clavicle_L
+  - first:
+      4: 400004
+    second: Clavicle_R
+  - first:
+      4: 400006
+    second: female_accessory
+  - first:
+      4: 400008
+    second: female_arm
+  - first:
+      4: 400010
+    second: female_chest
+  - first:
+      4: 400012
+    second: female_feet
+  - first:
+      4: 400014
+    second: female_forearm
+  - first:
+      4: 400016
+    second: female_hair
+  - first:
+      4: 400018
+    second: female_hat
+  - first:
+      4: 400020
+    second: female_head
+  - first:
+      4: 400022
+    second: female_legs
+  - first:
+      4: 400024
+    second: female_pants
+  - first:
+      4: 400026
+    second: female_pelvis
+  - first:
+      4: 400028
+    second: female_shirt
+  - first:
+      4: 400030
+    second: female_shoes
+  - first:
+      4: 400032
+    second: female_spine
+  - first:
+      4: 400034
+    second: //RootNode
+  - first:
+      4: 400036
+    second: Foot_L
+  - first:
+      4: 400038
+    second: Foot_R
+  - first:
+      4: 400040
+    second: Forearm_L
+  - first:
+      4: 400042
+    second: Forearm_R
+  - first:
+      4: 400044
+    second: Hand_L
+  - first:
+      4: 400046
+    second: Hand_R
+  - first:
+      4: 400048
+    second: Head
+  - first:
+      4: 400050
+    second: Head_end
+  - first:
+      4: 400052
+    second: hips
+  - first:
+      4: 400054
+    second: Index_1_L
+  - first:
+      4: 400056
+    second: Index_1_R
+  - first:
+      4: 400058
+    second: Index_2_L
+  - first:
+      4: 400060
+    second: Index_2_R
+  - first:
+      4: 400062
+    second: Index_3_L
+  - first:
+      4: 400064
+    second: Index_3_L_end
+  - first:
+      4: 400066
+    second: Index_3_R
+  - first:
+      4: 400068
+    second: Index_3_R_end
+  - first:
+      4: 400070
+    second: Little_1_L
+  - first:
+      4: 400072
+    second: Little_1_R
+  - first:
+      4: 400074
+    second: Little_2_R
+  - first:
+      4: 400076
+    second: Little_3_L
+  - first:
+      4: 400078
+    second: Little_3_L_end
+  - first:
+      4: 400080
+    second: Little_3_R
+  - first:
+      4: 400082
+    second: Little_3_R_end
+  - first:
+      4: 400084
+    second: little_l_2
+  - first:
+      4: 400086
+    second: Middle_1_L
+  - first:
+      4: 400088
+    second: Middle_1_R
+  - first:
+      4: 400090
+    second: Middle_2_L
+  - first:
+      4: 400092
+    second: Middle_2_R
+  - first:
+      4: 400094
+    second: Middle_3_L
+  - first:
+      4: 400096
+    second: Middle_3_L_end
+  - first:
+      4: 400098
+    second: Middle_3_R
+  - first:
+      4: 400100
+    second: Middle_3_R_end
+  - first:
+      4: 400102
+    second: Neck
+  - first:
+      4: 400104
+    second: Ring_1_L
+  - first:
+      4: 400106
+    second: Ring_1_R
+  - first:
+      4: 400108
+    second: Ring_2_L
+  - first:
+      4: 400110
+    second: Ring_2_R
+  - first:
+      4: 400112
+    second: Ring_3_L
+  - first:
+      4: 400114
+    second: Ring_3_L_end
+  - first:
+      4: 400116
+    second: Ring_3_R
+  - first:
+      4: 400118
+    second: Ring_3_R_end
+  - first:
+      4: 400120
+    second: Root
+  - first:
+      4: 400122
+    second: Shin_L
+  - first:
+      4: 400124
+    second: Shin_R
+  - first:
+      4: 400126
+    second: Shoulder_L
+  - first:
+      4: 400128
+    second: Shoulder_R
+  - first:
+      4: 400130
+    second: Spine1
+  - first:
+      4: 400132
+    second: Spine2
+  - first:
+      4: 400134
+    second: Thigh_L
+  - first:
+      4: 400136
+    second: Thigh_R
+  - first:
+      4: 400138
+    second: Thumb_1_L
+  - first:
+      4: 400140
+    second: Thumb_1_R
+  - first:
+      4: 400142
+    second: Thumb_2_L
+  - first:
+      4: 400144
+    second: Thumb_2_R
+  - first:
+      4: 400146
+    second: Thumb_3_L
+  - first:
+      4: 400148
+    second: Thumb_3_L_end
+  - first:
+      4: 400150
+    second: Thumb_3_R
+  - first:
+      4: 400152
+    second: Thumb_3_R_end
+  - first:
+      4: 400154
+    second: Toe_L
+  - first:
+      4: 400156
+    second: Toe_L_end
+  - first:
+      4: 400158
+    second: Toe_R
+  - first:
+      4: 400160
+    second: Toe_R_end
+  - first:
+      4: 400162
+    second: U3DMesh
+  - first:
+      21: 2100000
+    second: No Name
+  - first:
+      43: 4300000
+    second: U3DMesh
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: U3DMesh
   externalObjects: {}
   materials:
-    importMaterials: 1
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -182,14 +525,14 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
+    importConstraints: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -204,32 +547,52 @@ ModelImporter:
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
     importLights: 1
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
+    strictVertexDataChecks: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human:
     - boneName: Root
       humanName: Hips
@@ -821,8 +1184,7 @@ ModelImporter:
     - name: Ring_3_R_end
       parentName: Ring_3_R
       position: {x: 0.000000022351742, y: 0.020857573, z: -0.00000011920929}
-      rotation: {x: 0.000000010419171, y: 0.0000000027939677, z: -0.000000001862645,
-        w: 1}
+      rotation: {x: 0.000000010419171, y: 0.0000000027939677, z: -0.000000001862645, w: 1}
       scale: {x: 1.0000001, y: 1, z: 1}
     - name: Middle_1_R
       parentName: Hand_R
@@ -842,8 +1204,7 @@ ModelImporter:
     - name: Middle_3_R_end
       parentName: Middle_3_R
       position: {x: -0.000000007450581, y: 0.022213606, z: 0.00000023841858}
-      rotation: {x: -0.0000000060535967, y: -0.0000000037252903, z: -2.6323815e-25,
-        w: 1}
+      rotation: {x: -0.0000000060535967, y: -0.0000000037252903, z: -2.6323815e-25, w: 1}
       scale: {x: 1.0000001, y: 1, z: 1}
     - name: Index_1_R
       parentName: Hand_R
@@ -863,8 +1224,7 @@ ModelImporter:
     - name: Index_3_R_end
       parentName: Index_3_R
       position: {x: 0.000000059604645, y: 0.022218585, z: 0}
-      rotation: {x: 0.0000000037252903, y: 0.000000007450581, z: 0.000000007450581,
-        w: 1}
+      rotation: {x: 0.0000000037252903, y: 0.000000007450581, z: 0.000000007450581, w: 1}
       scale: {x: 0.9999999, y: 0.9999999, z: 1}
     - name: Thumb_1_R
       parentName: Hand_R
@@ -884,8 +1244,7 @@ ModelImporter:
     - name: Thumb_3_R_end
       parentName: Thumb_3_R
       position: {x: -0.00000023841858, y: 0.027511172, z: 0}
-      rotation: {x: -0.0000000074505797, y: -0.00000000372529, z: -0.000000011175869,
-        w: 1}
+      rotation: {x: -0.0000000074505797, y: -0.00000000372529, z: -0.000000011175869, w: 1}
       scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
     - name: Clavicle_L
       parentName: Chest
@@ -965,8 +1324,7 @@ ModelImporter:
     - name: Middle_3_L_end
       parentName: Middle_3_L
       position: {x: -0.0000000037252903, y: 0.022213606, z: 0}
-      rotation: {x: 0.0000000023283069, y: -0.000000007450581, z: 0.0000000037252903,
-        w: 1}
+      rotation: {x: 0.0000000023283069, y: -0.000000007450581, z: 0.0000000037252903, w: 1}
       scale: {x: 1, y: 1, z: 0.9999999}
     - name: Index_1_L
       parentName: Hand_L
@@ -1006,8 +1364,7 @@ ModelImporter:
     - name: Thumb_3_L_end
       parentName: Thumb_3_L
       position: {x: 0.00000023841858, y: 0.02751114, z: 0.000000029802322}
-      rotation: {x: -0.000000007450581, y: -0.000000011175872, z: 0.000000013038516,
-        w: 1}
+      rotation: {x: -0.000000007450581, y: -0.000000011175872, z: 0.000000013038516, w: 1}
       scale: {x: 1, y: 1, z: 0.99999994}
     - name: Thigh_R
       parentName: Root
@@ -1071,22 +1428,20 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 1
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 0
   animationType: 3
   humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 145087
-  packageName: Frank RPG Gunslinger
-  packageVersion: 1.0
-  assetPath: Assets/Frank_RPG_Gunslinger/Assets/Meshes/femalexxx.fbx
-  uploadId: 501695

@@ -15,15 +15,15 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 22.399994
-    y: 197.99997
+    x: -248.79993
+    y: 178.79999
     width: 190
     height: 135
   IsDragging: 1
   IsSelected: 0
   _sentence:
     CharacterName: Bozo
-    Text: DId you have the photos printed?
+    Text: Hey, just wondering if you got your photos printed?
     CharacterSprite: {fileID: 0}
   ParentNodes: []
   ChildNode: {fileID: -1453799273078323291}
@@ -31,32 +31,6 @@ MonoBehaviour:
   _externalFunctionName: 
   CharacterNameKey: 
   SentenceTextKey: 
---- !u!114 &-2793225497523839220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54f4b3c64aaf434ea0df52154c1c7680, type: 3}
-  m_Name: External Function Node
-  m_EditorClassIdentifier: Assembly-CSharp-firstpass::cherrydev.ExternalFunctionNode
-  NodeGraph: {fileID: 11400000}
-  Rect:
-    serializedVersion: 2
-    x: 769.6001
-    y: 212.39996
-    width: 190
-    height: 80
-  IsDragging: 1
-  IsSelected: 0
-  _functionName: CutScene1
-  _description: 
-  ParentNodes:
-  - {fileID: 7674076052492404554}
-  ChildNode: {fileID: 0}
 --- !u!114 &-1453799273078323291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,15 +46,15 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 248.00003
-    y: 197.19998
+    x: -23.19986
+    y: 178
     width: 190
     height: 135
   IsDragging: 1
   IsSelected: 0
   Answers:
-  - Bogos binted?
-  - Of course.
+  - bogos binted?
+  - Yeah
   AnswerKeys: []
   ParentNodes:
   - {fileID: -6654723048578498636}
@@ -104,8 +78,8 @@ MonoBehaviour:
   - {fileID: -1453799273078323291}
   - {fileID: 7674076052492404554}
   - {fileID: 2622546405441726315}
-  - {fileID: -2793225497523839220}
-  - {fileID: 6955950260168977673}
+  - {fileID: 8375861655067979313}
+  - {fileID: 6079992850526641037}
   VariablesConfig: {fileID: 0}
   _localizationTableName: 
   _characterNamesLocalizationName: 
@@ -127,24 +101,24 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 490.39996
-    y: 282.8
+    x: 236.80011
+    y: 263.59998
     width: 190
     height: 135
   IsDragging: 1
-  IsSelected: 0
+  IsSelected: 1
   _sentence:
     CharacterName: Bozo
-    Text: Perfect!
+    Text: ...
     CharacterSprite: {fileID: 0}
   ParentNodes:
   - {fileID: -1453799273078323291}
-  ChildNode: {fileID: 6955950260168977673}
+  ChildNode: {fileID: 6079992850526641037}
   _isExternalFunc: 0
-  _externalFunctionName: 
+  _externalFunctionName: CutScene2
   CharacterNameKey: 
   SentenceTextKey: 
---- !u!114 &6955950260168977673
+--- !u!114 &6079992850526641037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,8 +133,8 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 720.8002
-    y: 332.4
+    x: 481.60004
+    y: 286.80005
     width: 190
     height: 80
   IsDragging: 1
@@ -185,20 +159,46 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 470.39993
-    y: 129.19998
+    x: 226.39996
+    y: 98.80002
     width: 190
     height: 135
   IsDragging: 1
   IsSelected: 0
   _sentence:
     CharacterName: Bozo
-    Text: Huh?
+    Text: What
     CharacterSprite: {fileID: 0}
   ParentNodes:
   - {fileID: -1453799273078323291}
-  ChildNode: {fileID: -2793225497523839220}
+  ChildNode: {fileID: 8375861655067979313}
   _isExternalFunc: 0
-  _externalFunctionName: 
+  _externalFunctionName: CutScene1
   CharacterNameKey: 
   SentenceTextKey: 
+--- !u!114 &8375861655067979313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f4b3c64aaf434ea0df52154c1c7680, type: 3}
+  m_Name: External Function Node
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::cherrydev.ExternalFunctionNode
+  NodeGraph: {fileID: 11400000}
+  Rect:
+    serializedVersion: 2
+    x: 480.8
+    y: 124.40004
+    width: 190
+    height: 80
+  IsDragging: 1
+  IsSelected: 0
+  _functionName: CutScene1
+  _description: 
+  ParentNodes:
+  - {fileID: 7674076052492404554}
+  ChildNode: {fileID: 0}

@@ -845,10 +845,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.65
-  m_Height: 2.5
+  m_Radius: 0.27
+  m_Height: 2.03
   m_Direction: 1
-  m_Center: {x: 0, y: 1.09, z: 0}
+  m_Center: {x: 0, y: 0.87, z: 0}
 --- !u!114 &5454471870520816097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2260,7 +2260,7 @@ GameObject:
   - component: {fileID: 4164580235125351400}
   - component: {fileID: 4460926839020605168}
   m_Layer: 6
-  m_Name: Sphere
+  m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,80 +1,73 @@
 using UnityEngine;
+using StarterAssets; // Required to reference the controller script directly
 
 public class DialogueInputManager : MonoBehaviour
 {
-    // Drag your main Dialogue UI Prefab/GameObject here in the Inspector.
-    public GameObject dialogueUI;
-
     private GameObject player;
-    // IMPORTANT: Replace "PlayerController" with the actual name of your player input script.
     private MonoBehaviour playerControllerScript;
+    private StarterAssetsInputs _playerInputs;
 
     void Start()
     {
-        // Find the player GameObject using its tag.
-        // Make sure your player object is tagged "Player" in the Inspector.
         player = GameObject.FindGameObjectWithTag("Player");
 
         if (player != null)
         {
-            // Get the player's controller script.
-            // Replace "PlayerController" with the name of your script that handles movement, camera, etc.
-            playerControllerScript = player.GetComponent("ThirdPersonController") as MonoBehaviour;
-            if (playerControllerScript == null)
+            // Get the main controller script
+            playerControllerScript = player.GetComponent<ThirdPersonController>();
+            // Get the inputs script
+            _playerInputs = player.GetComponent<StarterAssetsInputs>();
+
+            if (playerControllerScript == null || _playerInputs == null)
             {
-                Debug.LogError("Player Controller script not found! Please make sure the script name is correct and it's attached to the player.");
+                Debug.LogError("Required player components (ThirdPersonController or StarterAssetsInputs) not found!");
             }
         }
         else
         {
             Debug.LogError("Player object not found! Make sure your player is tagged 'Player'.");
         }
-
-        // Ensure the dialogue UI is hidden at the start.
-        if (dialogueUI != null)
-        {
-            dialogueUI.SetActive(false);
-        }
     }
 
     /// <summary>
-    /// This function disables the player's control script, shows the dialogue UI, and handles the mouse cursor.
+    /// Disables the player's control script immediately.
     /// </summary>
     public void DisablePlayerInput()
     {
+        // Stop any running coroutines just in case, though none should be running now.
+        StopAllCoroutines();
+
         if (playerControllerScript != null)
         {
             playerControllerScript.enabled = false;
         }
 
-        if (dialogueUI != null)
-        {
-            dialogueUI.SetActive(true);
-        }
-
-        // Show and unlock the cursor so the player can click on dialogue options.
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
     /// <summary>
-    /// This function re-enables the player's control script, hides the dialogue UI, and handles the mouse cursor.
+    /// Re-enables the player's control script instantly and clears stale inputs.
     /// </summary>
     public void EnablePlayerInput()
     {
+        // 1. CRITICAL: Consume the stale inputs (like Jump from pressing space for dialogue)
+        if (_playerInputs != null)
+        {
+            _playerInputs.jump = false;
+            // Also good practice to clear interact/other action flags used in dialogue.
+            _playerInputs.interact = false;
+            // You may need to add other action flags here if they advance dialogue (e.g., _playerInputs.attack = false;)
+        }
+
+        // 2. Re-enable player controller instantly
         if (playerControllerScript != null)
         {
             playerControllerScript.enabled = true;
         }
 
-        if (dialogueUI != null)
-        {
-            dialogueUI.SetActive(false);
-        }
-
-        // Lock and hide the cursor for normal gameplay.
+        // 3. Lock and hide the cursor for normal gameplay.
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 }
-
