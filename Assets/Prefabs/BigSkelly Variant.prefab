@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 157000098809219287, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 157000098809219287, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 157000098809219287, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 157000098809219287, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
       propertyPath: m_LocalPosition.x
@@ -71,6 +71,18 @@ PrefabInstance:
     - target: {fileID: 5454471870520816097, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
       propertyPath: maxHealth
       value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 5498348265115200492, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5498348265115200492, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.912
+      objectReference: {fileID: 0}
+    - target: {fileID: 5498348265115200492, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8645521055970964182, guid: da5afc59e5c3c534c902088ed0b0cf08, type: 3}
       propertyPath: attackRadius

@@ -559,7 +559,7 @@ namespace StarterAssets
                 }
 
                 HitboxComponent hitbox = hit.GetComponent<HitboxComponent>();
-                if (hitbox != null)
+                if (hitbox != null && !hitbox.gameObject.CompareTag("Player"))
                 {
                     // Calculate distance from the explosion center
                     float distance = Vector3.Distance(transform.position, hit.transform.position);
@@ -610,6 +610,7 @@ namespace StarterAssets
             // Trigger animation
             if (_hasAnimator)
             {
+                _animator.applyRootMotion = true; // Enable root motion for the attack
                 _animator.SetTrigger(_animIDAttack);
             }
         }
@@ -658,6 +659,11 @@ namespace StarterAssets
         }
         public void EndAttack()
         {
+            if (_hasAnimator)
+            {
+                _animator.applyRootMotion = false; // Disable root motion after the attack
+            }
+
             _isAttacking = false;
         }
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

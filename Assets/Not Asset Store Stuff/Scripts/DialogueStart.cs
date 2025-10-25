@@ -2,12 +2,20 @@ using cherrydev;
 using UnityEngine;
 using Unity.VisualScripting; // Included for consistency
 using StarterAssets; // Required to access the StarterAssetsInputs script
+using UnityEngine.Playables; // Required for PlayableDirector
 
 public class DialogueStart : MonoBehaviour
 {
     // The components for the dialogue system
     [SerializeField] private DialogBehaviour DialogBehaviour;
     [SerializeField] private DialogNodeGraph DialogGraph;
+    [SerializeField] private Animator playerAnimator;
+
+
+    [Tooltip("Drag the Cutscene_Director's Playable Director component here.")]
+    public PlayableDirector cutsceneDirector1;
+    public PlayableDirector fadeoutDirector;
+    public Animator myCharacterAnimator;
 
     // Flag to ensure the dialogue only starts once
     private bool dialogueStarted = false;
@@ -47,7 +55,8 @@ public class DialogueStart : MonoBehaviour
 
             if (_playerInputs.interact)
             {
-                // Start the dialogue
+                // Start the dialogue and make the player idle
+                playerAnimator.SetFloat("Speed", 0f);
                 DialogBehaviour.StartDialog(DialogGraph);
                 dialogueStarted = true;
 
@@ -101,8 +110,20 @@ public class DialogueStart : MonoBehaviour
     // by using the name "Cutscene1"
     private void Cutscene1()
     {
-        Debug.Log("External Function: Cutscene1 is running!");
-        // Add your cutscene logic here
+
+        if (cutsceneDirector1 != null)
+        {
+            //Play the fade out animation
+            fadeoutDirector.Play();
+
+
+            // Optional: Disable the trigger so it only runs once
+            // this.enabled = false; 
+        }
+        else
+        {
+            Debug.LogError("The Playable Director reference is missing on the " + gameObject.name + " trigger!");
+        }
     }
 
     // This function can now be called from a Sentence Node
