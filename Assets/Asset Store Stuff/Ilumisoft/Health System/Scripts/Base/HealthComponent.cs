@@ -13,6 +13,7 @@ namespace Ilumisoft.HealthSystem
         public abstract float MaxHealth { get; set; }
         public abstract float CurrentHealth { get; set; }
         public abstract bool IsAlive { get; }
+        public abstract bool fromcutscene { get; set; }
 
         public abstract void AddHealth(float amount);
         public abstract void ApplyDamage(float damage);

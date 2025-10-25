@@ -15,8 +15,8 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 34.40013
-    y: 135.6
+    x: -123.199905
+    y: 149.20001
     width: 190
     height: 135
   IsDragging: 1
@@ -46,8 +46,8 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 260.0002
-    y: 134.80002
+    x: 102.40018
+    y: 148.40002
     width: 190
     height: 135
   IsDragging: 1
@@ -101,12 +101,12 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 520
-    y: 220.4
+    x: 362.39996
+    y: 234
     width: 190
     height: 135
   IsDragging: 1
-  IsSelected: 1
+  IsSelected: 0
   _sentence:
     CharacterName: Stranger
     Text: ???
@@ -133,8 +133,8 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 764.7997
-    y: 243.60007
+    x: 607.19965
+    y: 257.20007
     width: 190
     height: 80
   IsDragging: 1
@@ -159,8 +159,8 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 509.59985
-    y: 55.600037
+    x: 351.99982
+    y: 69.20004
     width: 190
     height: 135
   IsDragging: 1
@@ -191,12 +191,12 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 763.99963
-    y: 81.20006
+    x: 606.3996
+    y: 94.800064
     width: 190
     height: 80
   IsDragging: 1
-  IsSelected: 0
+  IsSelected: 1
   _functionName: Cutscene1
   _description: 
   ParentNodes:

@@ -17,6 +17,7 @@ namespace Ilumisoft.HealthSystem
         [SerializeField, Range(0, 1)]
         private float initialRatio = 1.0f;
 
+
         /// <summary>
         /// Gets or sets the max amount of health
         /// </summary>
@@ -31,6 +32,9 @@ namespace Ilumisoft.HealthSystem
         /// Returns true if the current amount of health is greater than zero
         /// </summary>
         public override bool IsAlive => CurrentHealth > 0.0f;
+
+        // Set to true if damage is from cutscene to prevent hit animation
+        public override bool fromcutscene { get; set; } = false;
 
         private void Awake()
         {
@@ -84,12 +88,25 @@ namespace Ilumisoft.HealthSystem
         /// Applies the given amount of damage
         /// </summary>
         /// <param name="damage"></param>
+        /// 
+        public void SetCutsceneBoolOn()
+        {
+            // set fromcutscene to true to prevent hit animation
+            fromcutscene = true;
+        }
+        public void SetCutSceneBoolOff()
+        {   
+            // set fromcutscene to false to allow hit animation
+            fromcutscene = false;
+        }
         public override void ApplyDamage(float damage)
         {
             if (IsAlive == false)
             {
                 return;
             }
+
+            TellAnimatorHit(fromcutscene);
 
             float previousHealth = CurrentHealth;
 
@@ -105,6 +122,15 @@ namespace Ilumisoft.HealthSystem
                 {
                     OnHealthEmpty?.Invoke();
                 }
+            }
+
+        }
+        public void TellAnimatorHit(bool isfromcutscene)
+        {
+            Animator animator = GetComponent<Animator>();
+            if (animator != null && !isfromcutscene)
+            {
+                animator.SetTrigger("Hit");
             }
         }
     }

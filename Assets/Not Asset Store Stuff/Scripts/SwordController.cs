@@ -8,7 +8,7 @@ public class SwordController : MonoBehaviour
     public float Damage = 25f;
 
     private Collider _swordCollider;
-    private List<HealthComponent> _hitTargets;
+    private List<HitboxComponent> _hitTargets;
 
     // --- NEW: Tracks if the sword is currently swinging and active ---
     private bool _isHitboxActive = false;
@@ -33,7 +33,7 @@ public class SwordController : MonoBehaviour
 
     private void Awake()
     {
-        _hitTargets = new List<HealthComponent>();
+        _hitTargets = new List<HitboxComponent>();
 
         // Force collider initialization to prevent NullRef
         Collider temp = DamageCollider;
@@ -50,22 +50,22 @@ public class SwordController : MonoBehaviour
         // Safety check: Don't process hits if we are not marked as active
         if (!_isHitboxActive) return;
 
-        HealthComponent targetHealth = other.GetComponentInParent<HealthComponent>();
+        HitboxComponent hitbox = other.GetComponent<HitboxComponent>();
 
-        if (targetHealth == null)
+        if (hitbox == null)
         {
             return;
         }
 
-        if (_hitTargets.Contains(targetHealth))
+        if (_hitTargets.Contains(hitbox))
         {
             return;
         }
 
         // Apply Damage and track the target.
-        targetHealth.ApplyDamage(Damage);
+        hitbox.ApplyDamage(Damage);
 
-        _hitTargets.Add(targetHealth);
+        _hitTargets.Add(hitbox);
     }
 
     // Called by an Animation Event at the start of the swing
