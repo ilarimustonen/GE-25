@@ -182,6 +182,9 @@ namespace StarterAssets
         private int _animIDForceBlast;
         private int _animIDAttack;
 
+        // cutscene flag
+        public bool cutsceneRunning;
+
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
 #endif
@@ -219,7 +222,7 @@ namespace StarterAssets
         private void Start()
         {
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
-            
+
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
@@ -241,7 +244,7 @@ namespace StarterAssets
                 }
             }
 #if ENABLE_INPUT_SYSTEM
-                _playerInput = GetComponent<PlayerInput>();
+            _playerInput = GetComponent<PlayerInput>();
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -257,34 +260,34 @@ namespace StarterAssets
 
         private void Update()
         {
-                _hasAnimator = TryGetComponent(out _animator);
+            _hasAnimator = TryGetComponent(out _animator);
 
-                // Handle ability cooldown
-                if (_forceBlastTimeoutDelta >= 0.0f)
-                {
-                    _forceBlastTimeoutDelta -= Time.deltaTime;
-                }
+            // Handle ability cooldown
+            if (_forceBlastTimeoutDelta >= 0.0f)
+            {
+                _forceBlastTimeoutDelta -= Time.deltaTime;
+            }
 
-                // Handle attack cooldown
-                if (_attackTimeoutDelta >= 0.0f)
-                {
-                    _attackTimeoutDelta -= Time.deltaTime;
-                }
+            // Handle attack cooldown
+            if (_attackTimeoutDelta >= 0.0f)
+            {
+                _attackTimeoutDelta -= Time.deltaTime;
+            }
 
-                // Check for force blast input
-                if (_input.forceBlast && _forceBlastTimeoutDelta <= 0.0f && !_isAttacking)
-                {
-                    HandleForceBlast();
-                }
+            // Check for force blast input
+            if (_input.forceBlast && _forceBlastTimeoutDelta <= 0.0f && !_isAttacking)
+            {
+                HandleForceBlast();
+            }
 
-                if (_input.attack && _attackTimeoutDelta <= 0.0f)
-                {
-                    _isAttacking = true;
-                    HandleAttack();
-                }
-                GroundedCheck();
-                JumpAndGravity();
-                Move();
+            if (_input.attack && _attackTimeoutDelta <= 0.0f)
+            {
+                _isAttacking = true;
+                HandleAttack();
+            }
+            GroundedCheck();
+            JumpAndGravity();
+            Move();
         }
 
         private void LateUpdate()
@@ -718,7 +721,7 @@ namespace StarterAssets
 
         private void OnFootstep(AnimationEvent animationEvent)
         {
-            if (animationEvent.animatorClipInfo.weight > 0.5f)
+            if (animationEvent.animatorClipInfo.weight > 0.5f && !cutsceneRunning)
             {
                 if (FootstepAudioClips.Length > 0)
                 {
@@ -730,10 +733,18 @@ namespace StarterAssets
 
         private void OnLand(AnimationEvent animationEvent)
         {
-            if (animationEvent.animatorClipInfo.weight > 0.5f)
+            if (animationEvent.animatorClipInfo.weight > 0.5f && !cutsceneRunning)
             {
                 PlayClipFromPool(LandingAudioClip, _footstepSources, GlobalAudioVolume);
             }
+        }
+        public void CutsceneRunning()
+        {
+            cutsceneRunning = true;
+        }
+        public void CutsceneEnded()
+        {
+            cutsceneRunning = false;
         }
     }
 }
