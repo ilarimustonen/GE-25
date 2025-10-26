@@ -18,10 +18,16 @@ namespace StarterAssets
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 2.0f;
+        public float MoveSpeed = 6.0f;
 
         [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 5.335f;
+        public float SprintSpeed = 12f;
+
+        [Tooltip("The maximum speed achievable after sprinting for a while.")]
+        public float MaxSprintSpeed = 30.0f;
+
+        [Tooltip("Time in seconds to accelerate from base SprintSpeed to MaxSprintSpeed.")]
+        public float SprintAccelerationTime = 5.0f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -161,6 +167,7 @@ namespace StarterAssets
 
         // player
         private float _speed;
+        private float _currentSprintTime = 0.0f;
         private float _animationBlend;
         private float _targetRotation = 0.0f;
         private float _rotationVelocity;
@@ -174,7 +181,6 @@ namespace StarterAssets
         private float _fallTimeoutDelta;
 
         // animation IDs
-        private int _animIDSpeed;
         private int _animIDGrounded;
         private int _animIDJump;
         private int _animIDFreeFall;
@@ -297,7 +303,6 @@ namespace StarterAssets
 
         private void AssignAnimationIDs()
         {
-            _animIDSpeed = Animator.StringToHash("Speed");
             _animIDGrounded = Animator.StringToHash("Grounded");
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
@@ -344,46 +349,60 @@ namespace StarterAssets
 
         private void Move()
         {
-            // If attacking, we simply set the input vector to zero to stop horizontal movement.
+            // If attacking, stop horizontal movement.
             Vector2 moveInput = _input.move;
             if (_isAttacking)
             {
                 moveInput = Vector2.zero;
             }
 
-            // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            // --- TARGET SPEED LOGIC (Your code, is correct) ---
+            float targetSpeed;
 
-            // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
+            if (moveInput == Vector2.zero)
+            {
+                // No input: Stop
+                targetSpeed = 0.0f;
+                _currentSprintTime = 0.0f; // Reset sprint timer
+            }
+            else if (_input.sprint)
+            {
+                // Sprinting: Accelerate from SprintSpeed to MaxSprintSpeed
+                _currentSprintTime += Time.deltaTime;
+                float sprintLerp = Mathf.Clamp01(_currentSprintTime / SprintAccelerationTime);
+                targetSpeed = Mathf.Lerp(SprintSpeed, MaxSprintSpeed, sprintLerp);
+            }
+            else
+            {
+                // Walking
+                targetSpeed = MoveSpeed;
+                _currentSprintTime = 0.0f; // Reset sprint timer
+            }
+            // --- END TARGET SPEED LOGIC ---
 
-            // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-            // if there is no input, set the target speed to 0
-            if (moveInput == Vector2.zero) targetSpeed = 0.0f;
 
             if (_isAttacking && Grounded)
             {
-                _speed = 0.0f; // Force instant stop/prevent acceleration
+                _speed = 0.0f; // Force instant stop
             }
 
-            // a reference to the players current horizontal velocity
+            // Get the player's current horizontal speed
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
             float speedOffset = 0.1f;
             float inputMagnitude = _input.analogMovement ? moveInput.magnitude : 1f;
 
-            // accelerate or decelerate to target speed, but only if not attacking and not grounded
+            // Accelerate or decelerate to the target speed
             if (!_isAttacking || Grounded)
             {
-
                 if (currentHorizontalSpeed < targetSpeed - speedOffset ||
-                currentHorizontalSpeed > targetSpeed + speedOffset)
+                    currentHorizontalSpeed > targetSpeed + speedOffset)
                 {
-                    // creates curved result rather than a linear one giving a more organic speed change
-                    // note T in Lerp is clamped, so we don't need to clamp our speed
+                    // Lerp the speed
                     _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
                         Time.deltaTime * SpeedChangeRate);
 
-                    // round speed to 3 decimal places
+                    // Round to 3 decimal places
                     _speed = Mathf.Round(_speed * 1000f) / 1000f;
                 }
                 else
@@ -392,18 +411,54 @@ namespace StarterAssets
                 }
             }
 
-            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+            // --- ANIMATION BLEND LOGIC (Remaps 0-30 speed to 0-3 range) ---
+            float animationTarget = 0.0f;
+
+            if (_speed > 0.0f)
+            {
+                if (_speed <= MoveSpeed)
+                {
+                    // We are between Idle and Walk (Remap 0-6 to 0-1)
+                    animationTarget = Mathf.InverseLerp(0.0f, MoveSpeed, _speed);
+                }
+                else if (_speed <= SprintSpeed)
+                {
+                    // We are between Walk and Run (Remap 6-12 to 1-2)
+                    animationTarget = 1.0f + Mathf.InverseLerp(MoveSpeed, SprintSpeed, _speed);
+                }
+                else
+                {
+                    // We are between Run and FastRun (Remap 12-30 to 2-3)
+                    animationTarget = 2.0f + Mathf.InverseLerp(SprintSpeed, MaxSprintSpeed, _speed);
+                }
+            }
+
+            // Lerp the animation blend value for smooth transitions
+            _animationBlend = Mathf.Lerp(_animationBlend, animationTarget, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
+
+            // --- THIS IS THE FIX from the previous step ---
+            // Send the final blend value to the animator
+            if (_hasAnimator)
+            {
+                // Use _animIDMotionSpeed, NOT _animationBlend (which is the float value)
+                _animator.SetFloat(_animIDMotionSpeed, _animationBlend);
+            }
+            // --- END ANIMATION BLEND LOGIC ---
+
+
+            // ------------------------------------------------------------------
+            // --- !!! THIS IS THE MISSING MOVEMENT & ROTATION CODE !!! ---
+            // ------------------------------------------------------------------
 
             // normalise input direction
             Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
 
-            // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
             if (moveInput != Vector2.zero)
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                             _mainCamera.transform.eulerAngles.y;
+                                    _mainCamera.transform.eulerAngles.y;
                 float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
                     RotationSmoothTime);
 
@@ -411,18 +466,13 @@ namespace StarterAssets
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
-
+            // Calculate the direction we want to move in based on the camera
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-            // move the player (THIS LINE NOW APPLIES GRAVITY CORRECTLY)
-            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
-
-            // update animator if using character
-            if (_hasAnimator)
-            {
-                _animator.SetFloat(_animIDSpeed, _animationBlend);
-                _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
-            }
+            // Apply the final movement to the CharacterController
+            // This single line handles both horizontal movement (_speed) and vertical movement (_verticalVelocity)
+            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
+                             new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
 
         private void JumpAndGravity()
@@ -699,7 +749,7 @@ namespace StarterAssets
             AudioSource availableSource = null;
             foreach (var source in sourcePool)
             {
-                if (!source.isPlaying)
+                if (source != null && !source.isPlaying)
                 {
                     availableSource = source;
                     break;

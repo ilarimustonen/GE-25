@@ -14,16 +14,6 @@ public class EnemyAIController : MonoBehaviour
     [Header("Attack Settings")]
     public float attackCooldown = 1f;
 
-    // --- NEW KNOCKBACK SETTINGS ---
-    [Header("Knockback Settings")]
-    [Tooltip("The radius for the grounded check sphere.")]
-    public float GroundedRadius = 0.3f;
-    [Tooltip("The layers that are considered ground.")]
-    public LayerMask GroundLayers;
-    [Tooltip("Vertical offset for the grounded check sphere from the object's pivot.")]
-    public float GroundedOffset = 0f;
-    // ----------------------------
-
     // --- Private Fields ---
     private Transform player;
     private NavMeshAgent agent;
@@ -79,17 +69,6 @@ public class EnemyAIController : MonoBehaviour
         StartCoroutine(KnockbackRoutine(explosionPosition, explosionForce, explosionRadius, explosionUpwardsModifier));
     }
 
-    // --- NEW HELPER METHOD FOR GROUND CHECK ---
-    private bool IsGrounded()
-    {
-        // Calculate the sphere position with the vertical offset
-        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
-
-        // Use Physics.CheckSphere to see if the feet are touching the ground layers
-        return Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
-    }
-    // ----------------------------------------
-
     private IEnumerator KnockbackRoutine(Vector3 explosionPosition, float explosionForce, float explosionRadius, float explosionUpwardsModifier)
     {
         currentState = State.KnockedBack;
@@ -115,22 +94,36 @@ public class EnemyAIController : MonoBehaviour
         // Allow physics to calculate force application before we start checking
         yield return new WaitForFixedUpdate();
 
-        // --- MODIFIED WAIT FOR KNOCKBACK TO END ---
-        float timer = 0f;
-        float knockbackDuration = 5.0f; // Increased timeout to prevent permanent lockup if something goes wrong
-        float velocityThreshold = 0.5f; // Slightly increased threshold for better responsiveness after landing
+        // --- MODIFIED WAIT LOGIC ---
 
-        while (timer < knockbackDuration)
+        // 1. Wait for the minimum guaranteed knockdown time
+        float minKnockdownTime = 5.0f;
+        yield return new WaitForSeconds(minKnockdownTime);
+
+        // 2. After the minimum time, wait until the enemy is on the NavMesh AND has slowed down.
+        float totalTimeout = 500.0f; // Failsafe to prevent permanent lockup
+        float timer = minKnockdownTime;
+        float velocityThreshold = 0.5f;
+        float navMeshSampleDistance = 0.5f; // How close to the NavMesh to be considered "landed"
+
+        while (timer < totalTimeout)
         {
-            // NEW CONDITION: Only break if it is grounded AND has slowed down.
-            if (IsGrounded() && rb.linearVelocity.magnitude < velocityThreshold)
+            NavMeshHit hit;
+            // Check if the enemy's current position is very close to the NavMesh
+            bool isOnNavMesh = NavMesh.SamplePosition(transform.position, out hit, navMeshSampleDistance, NavMesh.AllAreas);
+
+            // NEW CONDITION: Only break if it is on the NavMesh AND has slowed down.
+            if (isOnNavMesh && rb.linearVelocity.magnitude < velocityThreshold)
             {
-                break;
+                break; // Exit the loop and recover
             }
 
             timer += Time.deltaTime;
             yield return null; // Wait for the next frame
         }
+
+        // --- END OF MODIFIED WAIT LOGIC ---
+
 
         // --- RETURN CONTROL TO NAVMESHAGENT ---
         rb.isKinematic = true;
@@ -144,6 +137,7 @@ public class EnemyAIController : MonoBehaviour
         agent.enabled = true;
 
         // --- IMPORTANT: WARP TO THE NEW POSITION ---
+        // This logic is now even more important to ensure the agent syncs correctly.
         if (agent.isOnNavMesh)
         {
             agent.Warp(transform.position);
