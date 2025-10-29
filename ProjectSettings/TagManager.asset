@@ -8,6 +8,7 @@ TagManager:
   - Water
   - Enemy
   - NPC
+  - Terrain
   layers:
   - Default
   - TransparentFX

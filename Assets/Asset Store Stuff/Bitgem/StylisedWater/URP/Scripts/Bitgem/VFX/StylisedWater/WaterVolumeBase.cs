@@ -1,8 +1,9 @@
 ﻿#region Using statements
 
-using Bitgem.Core;
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
+using Bitgem.Core;
 using UnityEngine;
 
 #endregion
@@ -113,7 +114,9 @@ namespace Bitgem.VFX.StylisedWater
             {
                 if (tiles[x, y, z])
                 {
-                    return transform.position.y + y * TileSize;
+                    // Calculate the top of this tile(y1) based on the mesh generation logic in Rebuild()
+                    float tileTopLocalY = (y * TileSize - 0.5f) + TileSize;
+                    return transform.position.y + tileTopLocalY;
                 }
             }
 

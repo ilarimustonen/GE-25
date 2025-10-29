@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2766289735118379192}
   - component: {fileID: 8823963047146007790}
   - component: {fileID: 6970014426672446470}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4847,7 +4847,7 @@ GameObject:
   - component: {fileID: 5096448494630864381}
   - component: {fileID: 2794624424917121443}
   - component: {fileID: 593023512845981865}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SecondSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9683,7 +9683,7 @@ GameObject:
   - component: {fileID: 1668728550273529729}
   - component: {fileID: 1171547103868885109}
   - component: {fileID: 1214728865932677074}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Human_SpellAura_Lightning
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14522,7 +14522,7 @@ GameObject:
   - component: {fileID: 1465659332344395158}
   - component: {fileID: 2484615446390615863}
   - component: {fileID: 3566668226874833254}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}

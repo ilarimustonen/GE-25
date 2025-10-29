@@ -42,9 +42,13 @@ namespace Bitgem.VFX.StylisedWater
         public override void Validate()
         {
             // keep values sensible
-            Dimensions.x = Mathf.Clamp(Dimensions.x, 1, MAX_TILES_X);
-            Dimensions.y = Mathf.Clamp(Dimensions.y, 1, MAX_TILES_Y);
-            Dimensions.z = Mathf.Clamp(Dimensions.z, 1, MAX_TILES_Z);
+            float maxDimX = MAX_TILES_X * TileSize;
+            float maxDimY = MAX_TILES_Y * TileSize;
+            float maxDimZ = MAX_TILES_Z * TileSize;
+
+            Dimensions.x = Mathf.Clamp(Dimensions.x, 1, maxDimX);
+            Dimensions.y = Mathf.Clamp(Dimensions.y, 1, maxDimY);
+            Dimensions.z = Mathf.Clamp(Dimensions.z, 1, maxDimZ);
         }
 
         #endregion

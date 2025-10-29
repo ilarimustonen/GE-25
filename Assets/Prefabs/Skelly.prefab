@@ -707,7 +707,7 @@ GameObject:
   - component: {fileID: 5379136192706633741}
   m_Layer: 6
   m_Name: Skelly
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -794,11 +794,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   attackCooldown: 3
-  GroundedRadius: 0.3
-  GroundLayers:
-    serializedVersion: 2
-    m_Bits: 1
-  GroundedOffset: 0
 --- !u!54 &2698566422334032728
 Rigidbody:
   m_ObjectHideFlags: 0

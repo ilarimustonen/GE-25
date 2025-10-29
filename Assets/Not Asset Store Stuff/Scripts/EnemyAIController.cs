@@ -97,14 +97,14 @@ public class EnemyAIController : MonoBehaviour
         // --- MODIFIED WAIT LOGIC ---
 
         // 1. Wait for the minimum guaranteed knockdown time
-        float minKnockdownTime = 5.0f;
+        float minKnockdownTime = 2.0f;
         yield return new WaitForSeconds(minKnockdownTime);
 
         // 2. After the minimum time, wait until the enemy is on the NavMesh AND has slowed down.
         float totalTimeout = 500.0f; // Failsafe to prevent permanent lockup
         float timer = minKnockdownTime;
         float velocityThreshold = 0.5f;
-        float navMeshSampleDistance = 0.5f; // How close to the NavMesh to be considered "landed"
+        float navMeshSampleDistance = 2f; // How close to the NavMesh to be considered "landed"
 
         while (timer < totalTimeout)
         {

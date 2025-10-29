@@ -260,6 +260,17 @@
                 },
                 {
                     "name": "",
+                    "id": "fe4f7ee4-c7c7-4263-8ec5-c8f85766ce72",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ForceBlast",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "09ed3151-c878-4658-8580-c45c6ecaa805",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
@@ -271,11 +282,33 @@
                 },
                 {
                     "name": "",
+                    "id": "2fd08b4f-5504-4d88-ba5e-dbc1eb04ae6c",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "fa90948b-f5e1-4988-91c1-0c4d754f5286",
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "48dc254f-cb8f-4d51-bcff-39b03a02e8e0",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false

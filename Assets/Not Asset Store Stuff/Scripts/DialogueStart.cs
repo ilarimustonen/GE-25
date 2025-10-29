@@ -56,7 +56,7 @@ public class DialogueStart : MonoBehaviour
             if (_playerInputs.interact)
             {
                 // Start the dialogue and make the player idle
-                playerAnimator.SetFloat("Speed", 0f);
+                playerAnimator.SetFloat("MotionSpeed", 0f);
                 DialogBehaviour.StartDialog(DialogGraph);
                 dialogueStarted = true;
 
