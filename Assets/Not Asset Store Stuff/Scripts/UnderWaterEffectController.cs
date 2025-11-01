@@ -16,7 +16,7 @@ public class UnderwaterEffectController : MonoBehaviour
     [SerializeField] private Volume underwaterVolume;
 
     [Tooltip("The Low Pass Filter attached to the AudioListener (usually on this same GameObject).")]
-    private AudioLowPassFilter audioFilter;
+    [SerializeField] private AudioLowPassFilter audioFilter;
 
     [Header("Settings")]
     [Tooltip("How far below the surface the camera needs to be to trigger the effect.")]

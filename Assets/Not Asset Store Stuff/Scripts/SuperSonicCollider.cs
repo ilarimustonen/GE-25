@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using Ilumisoft.HealthSystem;
 using StarterAssets;
@@ -8,16 +6,11 @@ public class SuperSonicCollider : MonoBehaviour
     [Tooltip("The cooldown time in seconds for the supersonic force blast.")]
     public float ForceBlastCooldown = 5f;
 
-    [Header("References")]
-    [Tooltip("Reference to the ThirdPersonController script.")]
-    public ThirdPersonController characterControllerScript;
-
+    private PlayerCombat _combatManager;
     private BoxCollider superSonicTrigger;
     private HitboxComponent otherHitBoxComponent;
     private Rigidbody otherRigidBodyComponent;
-
-
-    private float _forceBlastTimeoutDelta;
+    public float _forceBlastTimeoutDelta { get; set; }
 
     // Trigger when an object with a hitbox enters the collider.
     private void OnTriggerEnter(Collider other)
@@ -57,18 +50,14 @@ public class SuperSonicCollider : MonoBehaviour
     }
     private void Awake()
     {
+        // Get reference to the combat manager.
+        _combatManager = GetComponent<PlayerCombat>();
+
+        // Get the set force blast cooldown from the combat manager.
+        ForceBlastCooldown = _combatManager.WorldBlastCooldown;
+
         // Initialize cooldown timer
         _forceBlastTimeoutDelta = ForceBlastCooldown;
-
-        // Ensure character controller reference is set
-        if (characterControllerScript == null)
-        {
-            characterControllerScript = GetComponent<ThirdPersonController>();
-            if (characterControllerScript == null)
-            {
-                Debug.LogError("ThirdPersonController component not found on " + gameObject.name);
-            }
-        }
 
         // Ensure the collider starts disabled
         if (superSonicCollider != null)
@@ -90,9 +79,12 @@ public class SuperSonicCollider : MonoBehaviour
         // Reset the cooldown timer
         _forceBlastTimeoutDelta = ForceBlastCooldown;
 
+        // Also set the normal force blast to be on cooldown.
+        _combatManager._forceBlastTimeoutDelta = _combatManager.ForceBlastCooldown;
+
         // Call the player controller to spawn a force blast on the position of the hit enemy.
-        if (isEnemy) characterControllerScript.TriggerBlastEffect(otherHitBoxComponent.transform.position);
-        else characterControllerScript.TriggerBlastEffect(otherRigidBodyComponent.transform.position);
+        if (isEnemy) _combatManager.TriggerBlastEffect(otherHitBoxComponent.transform.position);
+        else _combatManager.TriggerBlastEffect(otherRigidBodyComponent.transform.position);
 
     }
     public void SonicHitboxActivate() { superSonicCollider.enabled = true; }

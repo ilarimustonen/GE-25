@@ -2,6 +2,8 @@ using UnityEngine;
 using StarterAssets;
 public class PlayerCutsceneHelper : MonoBehaviour
 {
+    public bool cutsceneRunning;
+
     private GameObject player;
     private MonoBehaviour playerControllerScript;
     private StarterAssetsInputs _playerInputs;
@@ -48,7 +50,7 @@ public class PlayerCutsceneHelper : MonoBehaviour
 
     public void EnablePlayerInput()
     {
-        // 1. CRITICAL: Consume the stale inputs (like Jump from pressing space for dialogue)
+        // Consume the stale inputs (like Jump from pressing space for dialogue)
         if (_playerInputs != null)
         {
             _playerInputs.jump = false;
@@ -65,4 +67,6 @@ public class PlayerCutsceneHelper : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+    public void CutsceneRunning(){cutsceneRunning = true;}
+    public void CutsceneEnded(){cutsceneRunning = false;}
 }

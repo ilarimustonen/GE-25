@@ -5,7 +5,7 @@ using StarterAssets;
 public class WaterRunning : MonoBehaviour
 {
     [Header("References")]
-    [Tooltip("Reference to the ThirdPersonController script. Will be anuto-assigned.")]
+    [Tooltip("Reference to the ThirdPersonController script. Will be auto-assigned.")]
     public ThirdPersonController playerController;
 
     [Tooltip("The Animator component. Will be auto-assigned.")]
@@ -53,6 +53,12 @@ public class WaterRunning : MonoBehaviour
 
     [Tooltip("How far in front of the player to spawn splash effects (in units).")]
     public float splashForwardOffset = 2.0f;
+
+    [Tooltip("How much to add to the offset based on player speed. (FinalOffset = baseOffset + speed * scalar)")]
+    [SerializeField] private float splashSpeedScalar = 0.3f;
+
+    [Tooltip("The maximum distance the splash can spawn, to prevent it from getting too far at extreme speeds.")]
+    [SerializeField] private float splashMaxDistance = 15.0f;
 
     [SerializeField] private float splashInterval = 0.1f;
 
@@ -245,13 +251,24 @@ public class WaterRunning : MonoBehaviour
             // 2. Cycle the index for the next use
             _currentSplashIndex = (_currentSplashIndex + 1) % SplashPoolSize;
 
-            // 3. Position the splash in front of the player's forward direction
-            Vector3 forwardOffset = transform.forward * splashForwardOffset;
+
+            // 3. Calculate the dynamic offset based on current speed
+            float currentSpeed = playerController.CurrentSpeed;
+            float dynamicOffset = splashForwardOffset + (currentSpeed * splashSpeedScalar);
+
+            // 4. Clamp the offset to the maximum allowed distance
+            dynamicOffset = Mathf.Min(dynamicOffset, splashMaxDistance);
+
+            // 5. Position the splash in front of the player's forward direction
+            Vector3 forwardOffset = transform.forward * dynamicOffset;
+
+            // --- MODIFICATION END ---
+
             Vector3 splashPos = transform.position + forwardOffset + Vector3.up * 0.1f;
             splash.transform.position = splashPos;
             splash.transform.rotation = Quaternion.identity;
 
-            // 4. Activate or restart the particle system
+            // 6. Activate or restart the particle system
             ParticleSystem ps = splash.GetComponent<ParticleSystem>();
             if (ps != null)
             {
@@ -266,6 +283,8 @@ public class WaterRunning : MonoBehaviour
                     splash.SetActive(true);
                 }
 
+                // Immediately stop/clear any remnants from a previous life
+                ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                 ps.Play();
             }
             else

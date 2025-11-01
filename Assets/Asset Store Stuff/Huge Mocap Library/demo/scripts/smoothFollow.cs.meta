@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ad79974c52e7e9b4c86e8f7f89070874
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 19991
+  packageName: Huge FBX Mocap Library part 1
+  packageVersion: 1.0b
+  assetPath: Assets/Huge Mocap Library/demo/scripts/smoothFollow.cs
+  uploadId: 9123
