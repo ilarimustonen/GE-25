@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 015499fdcb36e3e498491a0a737755ce
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 19991
+  packageName: Huge FBX Mocap Library part 1
+  packageVersion: 1.0b
+  assetPath: Assets/Huge Mocap Library/demo/controller/demo controller.controller
+  uploadId: 9123
