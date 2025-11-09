@@ -8,14 +8,13 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Clone_Mat
-  m_Shader: {fileID: 211, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
-  - _EMISSION
-  m_InvalidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
+  m_InvalidKeywords:
+  - _FLIPBOOKBLENDING_OFF
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -24,10 +23,9 @@ Material:
     IgnoreProjection: False
     RenderType: Transparent
   disabledShaderPasses:
-  - MOTIONVECTORS
+  - GRABPASS
   - DepthOnly
   - SHADOWCASTER
-  - GRABPASS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -57,7 +55,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 085d6ae6b4061bb41b1f0f1d764fd463, type: 3}
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BentNormalMap:
@@ -275,7 +273,7 @@ Material:
     - _BaseColor_Step: 0
     - _BaseShade_Feather: 0.0001
     - _Base_Speed: 0
-    - _Blend: 0
+    - _Blend: 1
     - _BlendMode: 0
     - _BlendModePreserveSpecular: 1
     - _BlendOp: 0
@@ -347,6 +345,7 @@ Material:
     - _Farthest_Distance: 100
     - _FirstShadeOverridden: 0
     - _FirstShadeVisible: 1
+    - _FlipbookBlending: 0
     - _FlipbookMode: 0
     - _GI_Intensity: 0
     - _GlossMapScale: 0
@@ -536,6 +535,7 @@ Material:
     - _AngelRing_Color: {r: 1, g: 1, b: 1, a: 1}
     - _Ap_RimLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColorMaskColor: {r: 1, g: 1, b: 1, a: 1}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}

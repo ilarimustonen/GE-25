@@ -5114,6 +5114,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueStart
   DialogBehaviour: {fileID: 346124533}
   DialogGraph: {fileID: 11400000, guid: 80e716b3d8a9f444685ad2d5616b1e46, type: 2}
+  playerAnimator: {fileID: 0}
+  fadeDirector1: {fileID: 0}
+  fadeDirector2: {fileID: 0}
+  myCharacterAnimator: {fileID: 0}
 --- !u!1 &1183319570
 GameObject:
   m_ObjectHideFlags: 0

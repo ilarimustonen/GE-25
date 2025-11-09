@@ -50,6 +50,9 @@ public class SwordController : MonoBehaviour
         // Safety check: Don't process hits if we are not marked as active
         if (!_isHitboxActive) return;
 
+        // Ignore hits on the player
+        if (other.CompareTag("Player")) return;
+
         HitboxComponent hitbox = other.GetComponent<HitboxComponent>();
 
         if (hitbox == null)
