@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: b818c1dd3ca6d374b912a176994f6c22
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20282
+  packageName: Huge FBX Mocap Library part 2
+  packageVersion: 1.0
+  assetPath: Assets/Huge Mocap Library/mocap animations/85/85_14.fbx
+  uploadId: 9434
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable:
@@ -298,14 +305,43 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 3
+    animationCompression: 0
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: 85_14
+      takeName: 85_14
+      internalID: 7400000
+      firstFrame: 0
+      lastFrame: 593
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -937,10 +973,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 20282
-  packageName: Huge FBX Mocap Library part 2
-  packageVersion: 1.0
-  assetPath: Assets/Huge Mocap Library/mocap animations/85/85_14.fbx
-  uploadId: 9434

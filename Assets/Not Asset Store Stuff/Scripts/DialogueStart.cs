@@ -12,9 +12,11 @@ public class DialogueStart : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
 
 
-    [Tooltip("Drag the Cutscene_Director's Playable Director component here.")]
-    public PlayableDirector cutsceneDirector1;
-    public PlayableDirector fadeoutDirector;
+    [Tooltip("Drag the Cutscene_Director's Playable Director components here.")]
+    public PlayableDirector fadeDirector1;
+
+    public PlayableDirector fadeDirector2;
+
     public Animator myCharacterAnimator;
 
     // Flag to ensure the dialogue only starts once
@@ -111,10 +113,10 @@ public class DialogueStart : MonoBehaviour
     private void Cutscene1()
     {
 
-        if (cutsceneDirector1 != null)
+        if (fadeDirector1 != null)
         {
             //Play the fade out animation
-            fadeoutDirector.Play();
+            fadeDirector1.Play();
 
 
             // Optional: Disable the trigger so it only runs once
@@ -130,8 +132,19 @@ public class DialogueStart : MonoBehaviour
     // by using the name "Cutscene2"
     private void Cutscene2()
     {
-        Debug.Log("External Function: Cutscene2 is running!");
-        // Add your other cutscene logic here
+        if (fadeDirector2 != null)
+        {
+            //Play the fade out animation
+            fadeDirector2.Play();
+
+
+            // Optional: Disable the trigger so it only runs once
+            // this.enabled = false; 
+        }
+        else
+        {
+            Debug.LogError("The Playable Director reference is missing on the " + gameObject.name + " trigger!");
+        }
     }
     // -----------------------------
 }

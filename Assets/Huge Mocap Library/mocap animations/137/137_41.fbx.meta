@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: 9441429cebf618046b23694cec43ee23
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20285
+  packageName: Huge FBX Mocap Library part 3
+  packageVersion: 1.0
+  assetPath: Assets/Huge Mocap Library/mocap animations/137/137_41.fbx
+  uploadId: 9437
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable:
@@ -305,7 +312,36 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: 137_41
+      takeName: 137_41
+      internalID: 7400000
+      firstFrame: 0
+      lastFrame: 1038
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -937,10 +973,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 20285
-  packageName: Huge FBX Mocap Library part 3
-  packageVersion: 1.0
-  assetPath: Assets/Huge Mocap Library/mocap animations/137/137_41.fbx
-  uploadId: 9437
