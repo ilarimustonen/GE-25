@@ -9,6 +9,7 @@ public class SwordController : MonoBehaviour
 
     private Collider _swordCollider;
     private List<HitboxComponent> _hitTargets;
+    public PlayerAudioManager _audioManager;
 
     // --- NEW: Tracks if the sword is currently swinging and active ---
     private bool _isHitboxActive = false;
@@ -67,6 +68,9 @@ public class SwordController : MonoBehaviour
 
         // Apply Damage and track the target.
         hitbox.ApplyDamage(Damage);
+
+        // Play sword hit sound
+        _audioManager.PlayActionSound(PlayerAudioManager.ActionSoundType.SwordHit);
 
         _hitTargets.Add(hitbox);
     }

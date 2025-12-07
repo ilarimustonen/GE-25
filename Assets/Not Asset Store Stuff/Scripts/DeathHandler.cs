@@ -9,6 +9,8 @@ public class DeathHandler : MonoBehaviour
 {
     private HealthComponent healthComponent;
     private Animator animator;
+    private AudioSource audioSource;
+    public AudioClip deathAudio;
 
     // A string to hold the name or trigger parameter for the death animation
     // Make it a serialized field so it can be set in the Inspector
@@ -22,6 +24,8 @@ public class DeathHandler : MonoBehaviour
         healthComponent = GetComponent<HealthComponent>();
         // Get the Animator attached to this GameObject
         animator = GetComponent<Animator>();
+        // Get the AudioSource attached to this GameObject
+        audioSource = GetComponent<AudioSource>();
     }
 
     // OnEnable is called when the object becomes enabled and active
@@ -47,6 +51,17 @@ public class DeathHandler : MonoBehaviour
     /// </summary>
     private void HandleDeath()
     {
+
+        // Play the death sound effect
+        if (audioSource != null)
+        {
+            audioSource.PlayOneShot(deathAudio);
+        }
+        else
+        {
+            Debug.LogWarning("AudioSource component not found on " + gameObject.name);
+        }
+
         // 1. Disable components that shouldn't run during/after death (e.g., movement, AI).
 
         NavMeshAgent agent = gameObject.GetComponent<NavMeshAgent>();

@@ -29,11 +29,14 @@ public class PlayerAudioManager : MonoBehaviour
 
     [Header("Combat Audio")]
     public AudioClip SwordSwingAudioClip;
+    public AudioClip SwordHitAudioClip;
     public AudioClip ForceBlastAudioClip;
     public AudioSource[] ActionSources;
 
     [Range(0, 1)] public float ForceBlastAudioVolume = 0.5f;
     [Range(0, 1)] public float SwordSwingAudioVolume = 0.5f;
+    [Range(0, 1)] public float SwordHitAudioVolume = 0.5f;
+
 
     [Header("Supersonic Running Audio")]
     [Tooltip("Audio source for the looping supersonic/wind sound effect.")]
@@ -41,6 +44,9 @@ public class PlayerAudioManager : MonoBehaviour
 
     [Tooltip("The looping sound clip to play at high speeds.")]
     public AudioClip SupersonicLoopClip;
+
+    [Tooltip("Audio clip to play when starting the supersonic run")]
+    public AudioClip FoomAudioClip;
 
     [Tooltip("Speed (m/s) at which the supersonic sound starts playing.")]
     public float SupersonicStartSpeed = 25.0f;
@@ -51,6 +57,15 @@ public class PlayerAudioManager : MonoBehaviour
     [Range(0, 1)]
     [Tooltip("Maximum volume for the supersonic audio loop.")]
     public float SupersonicMaxVolume = 0.8f;
+
+    [Range(0, 1)]
+    [Tooltip("Volume for the 'Foom' sound played when starting supersonic speed.")]
+    public float FoomAudioVolume = 0.7f;
+
+    [Header("Misc Audio")]
+    [Tooltip("Audio clip played when scoring points.")]
+    public AudioClip ScoredAudioClip;
+    [Range(0, 1)] public float ScoredAudioVolume = 0.5f;
 
 
     // Private fields
@@ -76,8 +91,11 @@ public class PlayerAudioManager : MonoBehaviour
     public enum ActionSoundType
     {
         SwordSwing,
+        SwordHit,
         ForceBlast,
-        ForceBlastWorld
+        ForceBlastWorld,
+        Scored,
+        Foom
     }
 
 
@@ -316,6 +334,15 @@ public class PlayerAudioManager : MonoBehaviour
                 break;
             case ActionSoundType.ForceBlastWorld:
                 PlayClipFromPool(ForceBlastAudioClip, ActionSources, (ForceBlastAudioVolume * 1.5f));
+                break;
+            case ActionSoundType.Foom:
+                PlayClipFromPool(FoomAudioClip, ActionSources, FoomAudioVolume);
+                break;
+            case ActionSoundType.SwordHit:
+                PlayClipFromPool(SwordHitAudioClip, ActionSources, SwordHitAudioVolume);
+                break;
+            case ActionSoundType.Scored:
+                PlayClipFromPool(ScoredAudioClip, ActionSources, ScoredAudioVolume);
                 break;
             default:
                 Debug.LogWarning("Unknown action sound type: " + actionType);

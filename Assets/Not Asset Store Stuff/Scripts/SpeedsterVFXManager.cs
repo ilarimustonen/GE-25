@@ -3,6 +3,7 @@ using StarterAssets;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+
 public class SpeedsterVFXManager : MonoBehaviour
 {
     [Header("Speed Effect Activation Threshold")]
@@ -10,100 +11,105 @@ public class SpeedsterVFXManager : MonoBehaviour
     public float SpeedEffectThreshold = 2.0f;
 
     [Header("Clone Trail Settings")]
-
-    [Tooltip("Material to apply to player during high-speed movement (same as clone material).")]
+    [Tooltip("Material to apply to player during high-speed movement.")]
     public Material SpeedMaterial;
 
     [Tooltip("Particle system to spawn when transitioning to speed material.")]
     public GameObject MaterialTransitionVFX;
 
+    [Tooltip("Reference to the GameObject containing the Motion Blur Volume.")]
+    public GameObject SpeedEffectParent;
+
+    [Tooltip("The prefab to spawn as a 'clone'.")]
+    public GameObject ClonePrefab;
+
+    [Header("Trail Density Optimization")]
+    [Tooltip("Distance between clones at LOW speed (e.g., 0.2).")]
+    public float MinDistance = 0.2f;
+
+    [Tooltip("Distance between clones at HIGH speed (e.g., 2.0). Increases spacing to save performance.")]
+    public float MaxDistance = 2.0f;
+
+    [Tooltip("Minimum fade time for clones at low speed.")]
+    public float MinCloneFadeTime = 0.1f;
+
+    [Tooltip("Maximum fade time for clones at max speed.")]
+    public float MaxCloneFadeTime = 0.4f; // Lowered slightly for high speed performance
+
+    [Tooltip("Brightness multiplier at low speed.")]
+    public float MinBrightness = 0.1f;
+
+    [Tooltip("Brightness multiplier at max speed.")]
+    public float MaxBrightness = 1.0f;
+
     [Tooltip("The 'animationBlend' value at which max brightness is reached.")]
     public float MaxBrightnessThreshold = 2.5f;
 
-    [Tooltip("Reference to the GameObject containing the Motion Blur (e.g., a Post-Processing Volume).")]
-    public GameObject SpeedEffectParent;
-
-    [Tooltip("The prefab to spawn as a 'clone' or 'afterimage'.")]
-    public GameObject ClonePrefab;
-
-    [Tooltip("How often a clone is spawned (in seconds) when at max speed.")]
-    public float CloneSpawnRate = 0.01f;
-
-    [Tooltip("Minimum spawn rate (longest delay between clones) at low speed.")]
-    public float MaxCloneSpawnRate = 0.02f;
-
-    [Tooltip("Should clone spawn rate scale with speed dynamically?")]
-    public bool DynamicSpawnRate = true;
-
-    [Tooltip("Minimum fade time for clones at low speed.")]
-    public float MinCloneFadeTime = 0.01f;
-
-    [Tooltip("Maximum fade time for clones at max speed.")]
-    public float MaxCloneFadeTime = 0.5f;
-
-    [Tooltip("Brightness multiplier at low speed (dimmer).")]
-    public float MinBrightness = 0.1f;
-
-    [Tooltip("Brightness multiplier at max speed (brighter).")]
-    public float MaxBrightness = 1.0f;
-
     [Header("Clone Object Pool")]
-    [Tooltip("How many clone objects to pre-instantiate.")]
-    public int ClonePoolSize = 100;
+    public int ClonePoolSize = 100; // Recommend 150-200 for 500km/h
     private GameObject[] _clonePool;
-
-    [Tooltip("Parent object to organize clones under (optional, for hierarchy organization).")]
     public Transform CloneParent;
 
     [Header("Camera Effect Settings")]
-    [Tooltip("The camera to change the fov of during supersonic speeds.")]
     public CinemachineVirtualCamera Camera;
-
-    [Tooltip("Max field of view during supersonic speed")]
     public float MaxFOV = 70.0f;
-
-    [Tooltip("Max lens distortion during supersonic speed")]
     public float MaxLensD = -0.35f;
-
-    [Tooltip("Max motion blur values during supersonic speed")]
     public float MaxMotionBlur = 1.0f;
     public float MaxMotionBlurClamp = 0.2f;
-
-    [Tooltip("Max chromatic aberration during supersonic speed")]
     public float MaxChromaticAberration = 1.0f;
-
-    [Tooltip("How quickly to interpolate to the post-processing values.")]
-    public float SpeedEffectChangeSpeed = 0.1f;
-
-    [Tooltip("The 'animationBlend' value (0-3) at which the camera effects start")]
+    public float SpeedEffectChangeSpeed = 5.0f;
     public float camEffectSpeedThreshold = 2.0f;
 
-
+    // Internal State
     private SkinnedMeshRenderer[] _playerSkinnedMeshes;
     private Volume _SpeedsterVolume;
     private ThirdPersonController _thirdPersonController;
     private float MainFOV;
+
+    // Pooling logic
     private int _clonePoolIndex;
-    private float _cloneSpawnTimer;
+
+    // Post Processing
     private LensDistortion _lensDistortion;
     private MotionBlur _motionBlur;
     private ChromaticAberration _chromaticAberration;
     private bool _postProcessingCached = false;
-    private float _lastCamBlendValue = -1f;
-    private const float CAM_UPDATE_THRESHOLD = 0.02f;
-    private CloneFade[] _cloneFadeScripts;
+
+    // Material Management
     private Material[] _originalMaterials;
     private bool _materialsSwapped = false;
     private Material _playerSpeedMaterialInstance;
+
+    // Movement Tracking
     private Vector3 _lastPlayerPosition;
+    private float _distanceAccumulator = 0f;
+    private CloneFade[] _cloneFadeScripts;
+
+    // rotation for vfx spawn
+    private Quaternion rotation = Quaternion.Euler(-90f, 0f, 0f);
+
+    // Audio controller reference
+    private PlayerAudioManager _audioManager;
 
     void Start()
     {
-        _playerSkinnedMeshes = GetComponentsInChildren<SkinnedMeshRenderer>();
-        _SpeedsterVolume = SpeedEffectParent.GetComponent<Volume>();
         _thirdPersonController = GetComponent<ThirdPersonController>();
+        _audioManager = GetComponent<PlayerAudioManager>();
 
-        // Cache post-processing components
+        // 1. Setup Meshes & Materials immediately to prevent Index Errors
+        _playerSkinnedMeshes = GetComponentsInChildren<SkinnedMeshRenderer>();
+        if (_playerSkinnedMeshes != null && _playerSkinnedMeshes.Length > 0)
+        {
+            _originalMaterials = new Material[_playerSkinnedMeshes.Length];
+            for (int i = 0; i < _playerSkinnedMeshes.Length; i++)
+            {
+                // Use sharedMaterial to store the asset reference safely
+                _originalMaterials[i] = _playerSkinnedMeshes[i].sharedMaterial;
+            }
+        }
+
+        // 2. Setup Post Processing
+        _SpeedsterVolume = SpeedEffectParent.GetComponent<Volume>();
         if (_SpeedsterVolume != null && _SpeedsterVolume.profile != null)
         {
             _postProcessingCached = _SpeedsterVolume.profile.TryGet(out _lensDistortion) &&
@@ -111,262 +117,220 @@ public class SpeedsterVFXManager : MonoBehaviour
                                     _SpeedsterVolume.profile.TryGet(out _chromaticAberration);
         }
 
-        // Check the FOV of the camera
-        if (Camera != null)
-        {
-            MainFOV = Camera.m_Lens.FieldOfView;
-        }
+        if (Camera != null) MainFOV = Camera.m_Lens.FieldOfView;
 
-        // Initialize last player position
         _lastPlayerPosition = transform.position;
 
-        // --- Initialize The Clone Object Pool FIRST ---
-        if (ClonePrefab != null)
+        // 3. Initialize Pool
+        InitializePool();
+    }
+
+    private void InitializePool()
+    {
+        if (ClonePrefab == null) return;
+
+        _clonePool = new GameObject[ClonePoolSize];
+        _cloneFadeScripts = new CloneFade[ClonePoolSize];
+
+        // Create a container if not provided to keep hierarchy clean
+        if (CloneParent == null)
         {
-            _clonePool = new GameObject[ClonePoolSize];
-            _cloneFadeScripts = new CloneFade[ClonePoolSize];
+            GameObject group = new GameObject("SpeedsterClonePool");
+            CloneParent = group.transform;
+        }
 
-            for (int l = 0; l < ClonePoolSize; l++)
-            {
-                _clonePool[l] = Instantiate(ClonePrefab, transform.position, Quaternion.identity);
+        for (int l = 0; l < ClonePoolSize; l++)
+        {
+            _clonePool[l] = Instantiate(ClonePrefab, transform.position, Quaternion.identity);
+            _clonePool[l].transform.parent = CloneParent;
 
-                if (CloneParent != null)
-                {
-                    _clonePool[l].transform.parent = CloneParent;
-                }
-
-                // Cache the CloneFade component while we're instantiating
-                _cloneFadeScripts[l] = _clonePool[l].GetComponent<CloneFade>();
-
-                _clonePool[l].SetActive(false);
-            }
+            // Cache the script now to avoid GetComponent calls during high-speed updates
+            _cloneFadeScripts[l] = _clonePool[l].GetComponent<CloneFade>();
+            _clonePool[l].SetActive(false);
         }
     }
 
-    public void CloneSpawn()
+    public void VFXMain()
     {
-        if (ClonePrefab == null || _clonePool == null || _playerSkinnedMeshes == null) return;
+        if (_thirdPersonController == null) return;
+
+        HandleMaterialSwap();
+        HandleCameraChanges();
+        HandleTrailSpawning();
+    }
+
+    private void HandleTrailSpawning()
+    {
+        if (ClonePrefab == null || _clonePool == null) return;
 
         float currentBlend = _thirdPersonController._animationBlend;
         bool showEffects = (currentBlend >= SpeedEffectThreshold);
 
-        if (!showEffects)
+        // Calculate distance traveled this frame
+        float distanceThisFrame = Vector3.Distance(transform.position, _lastPlayerPosition);
+
+        if (!showEffects || distanceThisFrame <= 0.001f)
         {
-            _cloneSpawnTimer = CloneSpawnRate;
             _lastPlayerPosition = transform.position;
+            _distanceAccumulator = 0f;
             return;
         }
 
-        _cloneSpawnTimer -= Time.deltaTime;
+        _distanceAccumulator += distanceThisFrame;
 
-        if (_cloneSpawnTimer <= 0f)
+        // --- CALCULATE DYNAMIC DENSITY ---
+        float speedPercent = Mathf.InverseLerp(SpeedEffectThreshold, MaxBrightnessThreshold, currentBlend);
+
+        // As we get faster, we INCREASE the gap between clones to prevent pool exhaustion
+        float currentSpacing = Mathf.Lerp(MinDistance, MaxDistance, speedPercent);
+
+        float fadeTime = Mathf.Lerp(MinCloneFadeTime, MaxCloneFadeTime, speedPercent);
+        float brightness = Mathf.Lerp(MinBrightness, MaxBrightness, speedPercent);
+
+        // Spawn logic
+        while (_distanceAccumulator >= currentSpacing)
         {
-            // Dynamic spawn rate based on speed
-            float currentSpawnRate;
-            if (DynamicSpawnRate)
-            {
-                // Calculate speed as distance traveled per frame
-                float distanceTraveled = Vector3.Distance(_lastPlayerPosition, transform.position);
-                float speed = distanceTraveled / Time.deltaTime;
+            _distanceAccumulator -= currentSpacing;
 
-                // Base spawn rate adjusted by speed
-                // At higher speeds, spawn more frequently to maintain trail density
-                float speedMultiplier = Mathf.Clamp(speed / 100f, 0.5f, 10f); // Adjust 100f based on your speed scale
-                currentSpawnRate = CloneSpawnRate / speedMultiplier;
+            // Interpolate position backwards
+            float t = 1.0f - (_distanceAccumulator / distanceThisFrame);
+            Vector3 spawnPos = Vector3.Lerp(_lastPlayerPosition, transform.position, t);
 
-                // Clamp to prevent too frequent or too slow spawning
-                currentSpawnRate = Mathf.Clamp(currentSpawnRate, CloneSpawnRate * 0.1f, MaxCloneSpawnRate);
-            }
-            else
-            {
-                currentSpawnRate = Mathf.Lerp(MaxCloneSpawnRate, CloneSpawnRate, _thirdPersonController._speedsterPercent);
-            }
-
-            int clonesToSpawn = Mathf.Max(1, Mathf.CeilToInt(-_cloneSpawnTimer / currentSpawnRate) + 1);
-
-            // Calculate once outside loop for optimization
-            float speedPercent = Mathf.InverseLerp(SpeedEffectThreshold, MaxBrightnessThreshold, currentBlend);
-            float fadeTime = Mathf.Lerp(MinCloneFadeTime, MaxCloneFadeTime, speedPercent);
-            float finalBrightnessMultiplier = MinBrightness + ((MaxBrightness - MinBrightness) * speedPercent);
-
-            // Current position and rotation
-            Vector3 currentPos = transform.position;
-            Quaternion currentRot = transform.rotation;
-
-            for (int i = 0; i < clonesToSpawn; i++)
-            {
-                int currentIndex = _clonePoolIndex;
-                GameObject clone = _clonePool[currentIndex];
-                CloneFade fadeScript = _cloneFadeScripts[currentIndex];
-
-                _clonePoolIndex = (_clonePoolIndex + 1) % ClonePoolSize;
-
-                clone.SetActive(false);
-
-                // Interpolate position along the path from last position to current position
-                // This creates a smooth trail even when spawning multiple clones
-                float t = (float)(i + 1) / (clonesToSpawn + 1);
-                Vector3 interpolatedPos = Vector3.Lerp(_lastPlayerPosition, currentPos, t);
-
-                clone.transform.SetPositionAndRotation(interpolatedPos, currentRot);
-
-                if (fadeScript != null)
-                {
-                    fadeScript.Initialize(_playerSkinnedMeshes, fadeTime, finalBrightnessMultiplier);
-                }
-
-                clone.SetActive(true);
-            }
-
-            _cloneSpawnTimer = currentSpawnRate;
-            _lastPlayerPosition = currentPos;
+            SpawnSingleClone(spawnPos, transform.rotation, fadeTime, brightness);
         }
+
+        _lastPlayerPosition = transform.position;
     }
 
-    private void HandleCameraChanges(CinemachineVirtualCamera camera)
+    // --- THIS IS THE METHOD THAT WAS MISSING ---
+    private void SpawnSingleClone(Vector3 position, Quaternion rotation, float fadeTime, float brightness)
     {
-        if (camera == null || !_postProcessingCached) return;
+        int idx = _clonePoolIndex;
+        GameObject clone = _clonePool[idx];
+        CloneFade fadeScript = _cloneFadeScripts[idx];
 
-        // Skip update if speed hasn't changed significantly
+        // Increment index (Loop around)
+        _clonePoolIndex = (_clonePoolIndex + 1) % ClonePoolSize;
+
+        clone.SetActive(false);
+        clone.transform.SetPositionAndRotation(position, rotation);
+
+        if (fadeScript != null)
+        {
+            fadeScript.Initialize(_playerSkinnedMeshes, fadeTime, brightness);
+        }
+
+        clone.SetActive(true);
+    }
+
+    private void HandleCameraChanges()
+    {
+        if (Camera == null || !_postProcessingCached) return;
+
         float currentBlend = _thirdPersonController._animationBlend;
-        if (Mathf.Abs(currentBlend - _lastCamBlendValue) < CAM_UPDATE_THRESHOLD)
-            return;
-
-        _lastCamBlendValue = currentBlend;
-
-        // Calculate speed percentage once
         float camSpeedThresholdPercent = Mathf.InverseLerp(0.0f, camEffectSpeedThreshold, currentBlend);
+
         float deltaLerp = Time.deltaTime * SpeedEffectChangeSpeed;
-        float deltaLerpFast = Time.deltaTime * (SpeedEffectChangeSpeed * 5f);
 
         // FOV
         float targetFOV = Mathf.Lerp(MainFOV, MaxFOV, camSpeedThresholdPercent);
-        camera.m_Lens.FieldOfView = Mathf.Lerp(camera.m_Lens.FieldOfView, targetFOV, deltaLerp);
+        Camera.m_Lens.FieldOfView = Mathf.Lerp(Camera.m_Lens.FieldOfView, targetFOV, deltaLerp);
 
         // Lens Distortion
-        float targetLensD = Mathf.Lerp(0f, MaxLensD, camSpeedThresholdPercent);
-        _lensDistortion.intensity.value = Mathf.Lerp(_lensDistortion.intensity.value, targetLensD, deltaLerpFast);
+        if (_lensDistortion != null)
+            _lensDistortion.intensity.value = Mathf.Lerp(0f, MaxLensD, camSpeedThresholdPercent);
 
         // Motion Blur
-        float targetMotionBlur = Mathf.Lerp(0f, MaxMotionBlur, camSpeedThresholdPercent);
-        _motionBlur.intensity.value = Mathf.Lerp(_motionBlur.intensity.value, targetMotionBlur, deltaLerpFast);
-
-        float targetMotionBlurClamp = Mathf.Lerp(0f, MaxMotionBlurClamp, camSpeedThresholdPercent);
-        _motionBlur.clamp.value = Mathf.Lerp(_motionBlur.clamp.value, targetMotionBlurClamp, deltaLerpFast);
+        if (_motionBlur != null)
+        {
+            _motionBlur.intensity.value = Mathf.Lerp(0f, MaxMotionBlur, camSpeedThresholdPercent);
+            _motionBlur.clamp.value = Mathf.Lerp(0.05f, MaxMotionBlurClamp, camSpeedThresholdPercent);
+        }
 
         // Chromatic Aberration
-        float targetChromatic = Mathf.Lerp(0f, MaxChromaticAberration, camSpeedThresholdPercent);
-        _chromaticAberration.intensity.value = Mathf.Lerp(_chromaticAberration.intensity.value, targetChromatic, deltaLerpFast);
+        if (_chromaticAberration != null)
+            _chromaticAberration.intensity.value = Mathf.Lerp(0f, MaxChromaticAberration, camSpeedThresholdPercent);
     }
 
     private void HandleMaterialSwap()
     {
         if (SpeedMaterial == null || _playerSkinnedMeshes == null) return;
 
+        // SAFETY CHECK: Ensure arrays match
+        if (_originalMaterials == null || _playerSkinnedMeshes.Length != _originalMaterials.Length)
+        {
+            _originalMaterials = new Material[_playerSkinnedMeshes.Length];
+            for (int i = 0; i < _playerSkinnedMeshes.Length; i++)
+                _originalMaterials[i] = _playerSkinnedMeshes[i].sharedMaterial;
+        }
+
         float currentBlend = _thirdPersonController._animationBlend;
         bool shouldSwap = (currentBlend >= SpeedEffectThreshold);
 
-        // Swap to speed material
+        // 1. Swap TO Speed Material
         if (shouldSwap && !_materialsSwapped)
         {
-            // Store original materials if not already stored
-            if (_originalMaterials == null)
-            {
-                _originalMaterials = new Material[_playerSkinnedMeshes.Length];
-                for (int i = 0; i < _playerSkinnedMeshes.Length; i++)
-                {
-                    _originalMaterials[i] = _playerSkinnedMeshes[i].material;
-                }
-            }
-
-            // Create an instance of the speed material for the player
             if (_playerSpeedMaterialInstance == null)
-            {
                 _playerSpeedMaterialInstance = new Material(SpeedMaterial);
-            }
 
-            // Apply speed material instance to all meshes
             for (int i = 0; i < _playerSkinnedMeshes.Length; i++)
             {
-                _playerSkinnedMeshes[i].material = _playerSpeedMaterialInstance;
+                if (_playerSkinnedMeshes[i] != null)
+                    _playerSkinnedMeshes[i].material = _playerSpeedMaterialInstance;
             }
-            _materialsSwapped = true;
 
-            // Spawn transition VFX when entering speed mode
+            _materialsSwapped = true;
             SpawnTransitionVFX();
         }
-        // Revert to original materials
+        // 2. Swap BACK to Original
         else if (!shouldSwap && _materialsSwapped)
         {
             for (int i = 0; i < _playerSkinnedMeshes.Length; i++)
             {
-                if (_originalMaterials[i] != null)
+                if (_playerSkinnedMeshes[i] != null && _originalMaterials[i] != null)
                 {
                     _playerSkinnedMeshes[i].material = _originalMaterials[i];
                 }
             }
             _materialsSwapped = false;
-
-            // Spawn transition VFX when exiting speed mode
             SpawnTransitionVFX();
         }
 
-        // Update brightness while swapped
+        // 3. Update Emission/Brightness while swapped
         if (_materialsSwapped && _playerSpeedMaterialInstance != null)
         {
-            // Calculate the same brightness as clones
             float speedPercent = Mathf.InverseLerp(SpeedEffectThreshold, MaxBrightnessThreshold, currentBlend);
             float brightnessMultiplier = MinBrightness + ((MaxBrightness - MinBrightness) * speedPercent);
 
-            // Update the material's emission or brightness property
-            // Assuming your clone material uses "_EmissionColor" - adjust if different
-            Color baseEmission = SpeedMaterial.GetColor("_EmissionColor");
-            _playerSpeedMaterialInstance.SetColor("_EmissionColor", baseEmission * brightnessMultiplier);
-
-            // If using URP's base color instead/additionally:
-            // Color baseColor = SpeedMaterial.GetColor("_BaseColor");
-            // _playerSpeedMaterialInstance.SetColor("_BaseColor", baseColor * brightnessMultiplier);
+            if (SpeedMaterial.HasProperty("_EmissionColor"))
+            {
+                Color baseEmission = SpeedMaterial.GetColor("_EmissionColor");
+                _playerSpeedMaterialInstance.SetColor("_EmissionColor", baseEmission * brightnessMultiplier);
+            }
         }
     }
 
     private void SpawnTransitionVFX()
     {
         if (MaterialTransitionVFX != null)
-        {
-            GameObject vfx = Instantiate(MaterialTransitionVFX, transform.position, transform.rotation);
+        { 
+            GameObject vfx = Instantiate(MaterialTransitionVFX, transform.position, rotation, transform);
+            var ps = vfx.GetComponent<ParticleSystem>();
+            Destroy(vfx, ps != null ? ps.main.duration + 0.5f : 2.0f);
 
-            // Auto-destroy the particle system after it finishes playing
-            ParticleSystem ps = vfx.GetComponent<ParticleSystem>();
-            if (ps != null)
+            // Play the sound effect
+            if (_audioManager != null)
             {
-                Destroy(vfx, ps.main.duration + ps.main.startLifetime.constantMax);
-            }
-            else
-            {
-                // Fallback: destroy after 5 seconds if no particle system found
-                Destroy(vfx, 5f);
+                _audioManager.PlayActionSound(PlayerAudioManager.ActionSoundType.Foom);
             }
         }
     }
 
     private void OnDestroy()
     {
-        // Clean up the material instance to prevent memory leaks
         if (_playerSpeedMaterialInstance != null)
         {
             Destroy(_playerSpeedMaterialInstance);
         }
-    }
-
-    public void VFXMain()
-    {
-        // Handle Material Swapping
-        HandleMaterialSwap();
-
-        // Handle Clone Spawning
-        CloneSpawn();
-
-        // Handle Camera Changes
-        HandleCameraChanges(Camera);
     }
 }

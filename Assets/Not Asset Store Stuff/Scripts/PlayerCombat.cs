@@ -218,6 +218,12 @@ public class PlayerCombat : MonoBehaviour
         else
             blastColliders = Physics.OverlapSphere(transform.position, ForceBlastRadius);
 
+        // Play the sword hit sound if there's at least one hitbox in the array
+        if (blastColliders.Length > 0)
+        {
+            _audioManager.PlayActionSound(PlayerAudioManager.ActionSoundType.SwordHit);
+        }
+
         // Apply force to each collider
         foreach (Collider hit in blastColliders)
         {
@@ -325,6 +331,7 @@ public class PlayerCombat : MonoBehaviour
         // Play sword swing sound
         _audioManager.PlayActionSound(PlayerAudioManager.ActionSoundType.SwordSwing);
     }
+
     public void HitboxActivate()
     {
         if (swordController != null)
