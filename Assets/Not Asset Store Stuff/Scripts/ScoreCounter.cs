@@ -6,6 +6,7 @@ public class ScoreCounter : MonoBehaviour
     // Singleton pattern to ensure only one instance exists
     public static ScoreCounter Instance { get; private set; }
     public PlayerAudioManager audioManager;
+    public ChallengeTimerManager challengeTimerManager;
 
     [Header("")]
     [SerializeField] private ScoreHUD scoreHUD;
@@ -62,6 +63,7 @@ public class ScoreCounter : MonoBehaviour
             if (scoreHUD != null)
             {
                 scoreHUD.UpdateScore(score);
+                challengeTimerManager.AddScore();
             }
         }
         // Play sound effect if needed

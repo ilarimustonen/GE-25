@@ -6,6 +6,9 @@ using UnityEngine.Playables; // Required for PlayableDirector
 
 public class DialogueStart : MonoBehaviour
 {
+    // Challenge timer
+    public ChallengeTimerManager challengeTimerManager;
+
     // The components for the dialogue system
     [SerializeField] private DialogBehaviour DialogBehaviour;
     [SerializeField] private DialogNodeGraph DialogGraph;
@@ -40,6 +43,7 @@ public class DialogueStart : MonoBehaviour
         // Bind your C# functions to string names [cite: 146, 166]
         DialogBehaviour.BindExternalFunction("Cutscene1", Cutscene1);
         DialogBehaviour.BindExternalFunction("Cutscene2", Cutscene2);
+        DialogBehaviour.BindExternalFunction("Challenge", Challenge);
     }
     // -------------------------
 
@@ -144,6 +148,18 @@ public class DialogueStart : MonoBehaviour
         else
         {
             Debug.LogError("The Playable Director reference is missing on the " + gameObject.name + " trigger!");
+        }
+    }
+
+    private void Challenge()
+    {
+        if (challengeTimerManager != null)
+        {
+            challengeTimerManager.StartTimer();
+        }
+        else
+        {
+            Debug.LogError("Missing challenge script");
         }
     }
     // -----------------------------

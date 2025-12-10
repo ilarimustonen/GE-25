@@ -46,21 +46,23 @@ MonoBehaviour:
   NodeGraph: {fileID: 11400000}
   Rect:
     serializedVersion: 2
-    x: 254.40015
-    y: 174
+    x: 263.20013
+    y: 190.80002
     width: 190
-    height: 135
+    height: 155
   IsDragging: 1
   IsSelected: 0
   Answers:
   - Option 1
   - Option 2
+  - Challenge
   AnswerKeys: []
   ParentNodes:
   - {fileID: -6654723048578498636}
   ChildNodes:
   - {fileID: 7674076052492404554}
   - {fileID: 2622546405441726315}
+  - {fileID: 995100069017069003}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,12 +82,72 @@ MonoBehaviour:
   - {fileID: 2622546405441726315}
   - {fileID: 8375861655067979313}
   - {fileID: 6079992850526641037}
+  - {fileID: 995100069017069003}
+  - {fileID: 1559937840804766145}
   VariablesConfig: {fileID: 0}
   _localizationTableName: 
   _characterNamesLocalizationName: 
   NodeToDrawLineFrom: {fileID: 0}
   LinePosition: {x: 0, y: 0}
   IsLocalizationSetUp: 0
+--- !u!114 &995100069017069003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a32a464d8ccff4e40a60c45b40a1e648, type: 3}
+  m_Name: Sentence Node
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::cherrydev.SentenceNode
+  NodeGraph: {fileID: 11400000}
+  Rect:
+    serializedVersion: 2
+    x: 469.59998
+    y: 414
+    width: 190
+    height: 135
+  IsDragging: 1
+  IsSelected: 0
+  _sentence:
+    CharacterName: Stranger
+    Text: You have 60 seconds
+    CharacterSprite: {fileID: 21300000, guid: 154bdbe0073d8d64d95055cb09632bee, type: 3}
+  ParentNodes:
+  - {fileID: -1453799273078323291}
+  ChildNode: {fileID: 1559937840804766145}
+  _isExternalFunc: 0
+  _externalFunctionName: 
+  CharacterNameKey: 
+  SentenceTextKey: 
+--- !u!114 &1559937840804766145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f4b3c64aaf434ea0df52154c1c7680, type: 3}
+  m_Name: External Function Node
+  m_EditorClassIdentifier: Assembly-CSharp-firstpass::cherrydev.ExternalFunctionNode
+  NodeGraph: {fileID: 11400000}
+  Rect:
+    serializedVersion: 2
+    x: 744
+    y: 462.80002
+    width: 190
+    height: 80
+  IsDragging: 1
+  IsSelected: 0
+  _functionName: Challenge
+  _description: 
+  ParentNodes:
+  - {fileID: 995100069017069003}
+  ChildNode: {fileID: 0}
 --- !u!114 &2622546405441726315
 MonoBehaviour:
   m_ObjectHideFlags: 0
