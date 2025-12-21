@@ -15,6 +15,7 @@ namespace StarterAssets
         public bool forceBlast;
 		public bool attack;
 		public bool interact;
+		public bool groundSlam;
 
         [Header("Movement Settings")]
 		public bool analogMovement;
@@ -59,6 +60,11 @@ namespace StarterAssets
 		{
 			InteractInput(value.isPressed);
         }
+
+		public void OnGroundSlam(InputValue value)
+		{
+			GroundSlamInput(value.isPressed);
+		}
 #endif
 
 
@@ -95,6 +101,11 @@ namespace StarterAssets
 			interact = newInteractState;
         }
 
+		public void GroundSlamInput(bool newGroundSlamState)
+		{
+			groundSlam = newGroundSlamState;
+		}
+
         private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
@@ -110,6 +121,8 @@ namespace StarterAssets
             // Reset one-shot action flags at the end of the frame
             forceBlast = false;
             attack = false;
+			groundSlam = false;
+			interact = false;
         }
 
     }
