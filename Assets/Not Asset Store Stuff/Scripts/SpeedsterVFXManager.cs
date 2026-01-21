@@ -34,7 +34,7 @@ public class SpeedsterVFXManager : MonoBehaviour
     public float MinCloneFadeTime = 0.1f;
 
     [Tooltip("Maximum fade time for clones at max speed.")]
-    public float MaxCloneFadeTime = 0.4f; // Lowered slightly for high speed performance
+    public float MaxCloneFadeTime = 0.4f; 
 
     [Tooltip("Brightness multiplier at low speed.")]
     public float MinBrightness = 0.1f;
