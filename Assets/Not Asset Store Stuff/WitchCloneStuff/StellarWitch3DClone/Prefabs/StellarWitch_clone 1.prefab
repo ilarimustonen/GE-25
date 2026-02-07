@@ -16,7 +16,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &1904997610482865745
 Transform:
@@ -80,6 +80,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &7849028505310142736
 MeshFilter:
@@ -284,6 +285,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: d172c22791a73d64ab9cfd99ee72de93, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d172c22791a73d64ab9cfd99ee72de93, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 1391987778778549708, guid: d172c22791a73d64ab9cfd99ee72de93, type: 3}
       propertyPath: m_Materials.Array.size
