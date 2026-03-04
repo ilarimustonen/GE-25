@@ -10,6 +10,7 @@ TagManager:
   - NPC
   - Terrain
   - PlayerBack
+  - ITEM1
   layers:
   - Default
   - TransparentFX

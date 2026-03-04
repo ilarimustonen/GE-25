@@ -235,9 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29be6946185a21349b10ad4f2e117278, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  objectiveName: TEST STATUE
-  description: INSANE LORE
-  prefab: {fileID: 0}
+  prefab: {fileID: 5030205576725695004}
 --- !u!65 &3614067945586859493
 BoxCollider:
   m_ObjectHideFlags: 0
