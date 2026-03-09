@@ -11,6 +11,7 @@ TagManager:
   - Terrain
   - PlayerBack
   - ITEM1
+  - ITEM2
   layers:
   - Default
   - TransparentFX

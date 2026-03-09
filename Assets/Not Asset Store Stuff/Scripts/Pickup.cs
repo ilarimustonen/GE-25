@@ -10,9 +10,11 @@ public abstract class Pickup : MonoBehaviour
 
     protected abstract string itemTag { get; }
 
+    protected abstract BoxCollider pickupCollider { get; }
+
     private GameObject playerBack;
     private Vector3 playerBackPos;
-    private BoxCollider pickupCollider;
+
     private bool playerInRange;
     private StarterAssetsInputs _playerInputs;
     private GameObject _player;
@@ -23,7 +25,6 @@ public abstract class Pickup : MonoBehaviour
 
     private void Awake()
     {
-        pickupCollider = GetComponent<BoxCollider>();
         _player = GameObject.FindGameObjectWithTag("Player");
         _playerInputs = _player.GetComponent<StarterAssetsInputs>();
         playerBack = GameObject.FindGameObjectWithTag("PlayerBack");
@@ -88,7 +89,9 @@ public abstract class Pickup : MonoBehaviour
 
                 // Enable item on the back.
                 item = GameObject.FindWithTag(itemTag);
-                item.GetComponent<SkinnedMeshRenderer>().enabled = true;
+                try { item.GetComponent<SkinnedMeshRenderer>().enabled = true; }
+                catch { item.GetComponent<MeshRenderer>().enabled = true; }
+
                 factor = 0f; // Reset factor for future use
                 gameObject.SetActive(false); // Deactivate the original item
             }
