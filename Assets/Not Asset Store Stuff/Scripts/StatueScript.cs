@@ -8,7 +8,6 @@ public class Statue : Pickup
 
     public override void OnPickedUp()
     {
-
+        deliveryObj = GameObject.FindGameObjectWithTag("NPC");
     }
-
 }

@@ -3,27 +3,28 @@ using StarterAssets;
 public abstract class Pickup : MonoBehaviour
 {
     public abstract string objectiveName { get; }
-
     public abstract string description { get; }
-
-
     protected abstract BoxCollider pickupCollider { get; }
+    protected static GameObject deliveryObj;
 
-    private GameObject playerBack;
     private bool playerInRange;
-    private StarterAssetsInputs _playerInputs;
-    private GameObject _player;
-    private bool attachingToBack;
     private float factor;
-    Vector3 originalPosition;
+    private Vector3 originalPosition;
+    private Vector3 deliverLocation;
+    private Transform playerLocation;
+    private bool attachingToBack;
+    private static GameObject playerBack;
+    private static StarterAssetsInputs _playerInputs;
+    private static GameObject _player;
     private static bool attached;
-    
+    private static float distanceToDelivery;
 
     private void Awake()
     {
         _player = GameObject.FindGameObjectWithTag("Player");
         _playerInputs = _player.GetComponent<StarterAssetsInputs>();
         playerBack = GameObject.FindGameObjectWithTag("PlayerBack");
+        playerLocation = _player.transform;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -44,10 +45,8 @@ public abstract class Pickup : MonoBehaviour
 
     private void Update()
     {
-        if (playerInRange && !attachingToBack && !attached)
+        if (playerInRange && !attachingToBack && !attached && _playerInputs.interact)
         {
-            if (_playerInputs.interact)
-            {
                 // Save the original position of the item before starting the attachment process.
                 originalPosition = transform.position;
 
@@ -56,17 +55,18 @@ public abstract class Pickup : MonoBehaviour
 
                 // TESTING PURPOSES
                 Debug.Log($"Picked up: {objectiveName} - {description}");
-                
-                // Set the attached bool
-                attached = true;
-                Debug.Log(attached);
 
-                // Call the pick up logic.
+                // Call the pick up logic on the item.
                 OnPickedUp();
+                
+                // Set the flag for attached
+                attached = true;
+
+                // Set the delivery location
+                deliverLocation = deliveryObj.transform.position;
 
                 // consume the input
                 _playerInputs.interact = false;
-            }
         }
         if (attachingToBack)
         {
@@ -80,6 +80,7 @@ public abstract class Pickup : MonoBehaviour
             if (factor >= 1f)
             {
                 attachingToBack = false;
+                Debug.Log(attached);
 
                 // Snap the item to the back slot.
                 transform.parent = playerBack.transform;
@@ -90,5 +91,28 @@ public abstract class Pickup : MonoBehaviour
 
 
         }
+        if(attached)
+        {
+            distanceToDelivery = Vector3.Distance(playerLocation.position, deliverLocation);
+            if (distanceToDelivery <= 5 && _playerInputs.interact)
+            {
+                // Call the deliver method
+                Deliver();
+
+                // Consume input
+                _playerInputs.interact = false;
+
+                // Debug
+                Debug.Log("Delivered");
+            }
+        }
+
+    }
+
+    private void Deliver()
+    {
+        attached = false;
+        Debug.Log("Disabling object");
+        gameObject.SetActive(false);
     }
 }
