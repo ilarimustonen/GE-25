@@ -45,7 +45,52 @@ public abstract class Pickup : MonoBehaviour
 
     private void Update()
     {
-        if (playerInRange && !attachingToBack && !attached && _playerInputs.interact)
+        if (attachingToBack)
+        {
+            // timer to keep track of time elapsed
+            factor += Time.deltaTime; // Increment the factor by the time elapsed since the last frame
+
+            // Interpolate the position to the player's back with the factor counted by the ticker
+            transform.position = Vector3.Lerp(originalPosition, playerBack.transform.position, factor);
+
+            // Spin the object smoothly while attaching
+            transform.Rotate(0, 15f, 0);
+
+            // Stop attaching after the target time (1s)
+            if (factor >= 1f)
+            {
+                attachingToBack = false;
+                Debug.Log(attached);
+
+                // Snap the item to the back slot.
+                transform.parent = playerBack.transform;
+                transform.rotation = playerBack.transform.rotation;
+
+                factor = 0f; // Reset factor for future use
+            }
+
+            return;
+        }
+
+        if (attached)
+        {
+            distanceToDelivery = Vector3.Distance(playerLocation.position, deliverLocation);
+            if (distanceToDelivery <= 5 && _playerInputs.interact)
+            {
+                // Call the deliver method
+                Deliver();
+
+                // Consume input
+                _playerInputs.interact = false;
+
+                // Debug
+                Debug.Log("Delivered");
+            }
+
+            return;
+        }
+
+        if (playerInRange  && _playerInputs.interact)
         {
                 // Save the original position of the item before starting the attachment process.
                 originalPosition = transform.position;
@@ -68,48 +113,9 @@ public abstract class Pickup : MonoBehaviour
                 // consume the input
                 _playerInputs.interact = false;
         }
-        if (attachingToBack)
-        {
-            // timer to keep track of time elapsed
-            factor += Time.deltaTime; // Increment the factor by the time elapsed since the last frame
-
-            // Interpolate the position to the player's back with the factor counted by the ticker
-            transform.position = Vector3.Lerp(originalPosition, playerBack.transform.position, factor);
-
-            // Stop attaching after the target time (1s)
-            if (factor >= 1f)
-            {
-                attachingToBack = false;
-                Debug.Log(attached);
-
-                // Snap the item to the back slot.
-                transform.parent = playerBack.transform;
-                transform.rotation = playerBack.transform.rotation;
-
-                factor = 0f; // Reset factor for future use
-            }
-
-
-        }
-        if(attached)
-        {
-            distanceToDelivery = Vector3.Distance(playerLocation.position, deliverLocation);
-            if (distanceToDelivery <= 5 && _playerInputs.interact)
-            {
-                // Call the deliver method
-                Deliver();
-
-                // Consume input
-                _playerInputs.interact = false;
-
-                // Debug
-                Debug.Log("Delivered");
-            }
-        }
 
     }
-
-    private void Deliver()
+    public void Deliver()
     {
         attached = false;
         Debug.Log("Disabling object");
