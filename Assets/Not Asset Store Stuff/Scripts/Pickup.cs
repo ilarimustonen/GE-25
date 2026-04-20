@@ -8,7 +8,7 @@ public abstract class Pickup : MonoBehaviour
     protected static GameObject deliveryObj;
 
     private bool playerInRange;
-    private float factor;
+    private float counter;
     private Vector3 originalPosition;
     private Vector3 deliverLocation;
     private Transform playerLocation;
@@ -48,16 +48,16 @@ public abstract class Pickup : MonoBehaviour
         if (attachingToBack)
         {
             // timer to keep track of time elapsed
-            factor += Time.deltaTime; // Increment the factor by the time elapsed since the last frame
+            counter += Time.deltaTime; // Increment the counter by the time elapsed since the last frame
 
-            // Interpolate the position to the player's back with the factor counted by the ticker
-            transform.position = Vector3.Lerp(originalPosition, playerBack.transform.position, factor);
+            // Interpolate the position to the player's back with the counter counted by the ticker
+            transform.position = Vector3.Lerp(originalPosition, playerBack.transform.position, counter);
 
             // Spin the object smoothly while attaching
             transform.Rotate(0, 15f, 0);
 
             // Stop attaching after the target time (1s)
-            if (factor >= 1f)
+            if (counter >= 1f)
             {
                 attachingToBack = false;
                 Debug.Log(attached);
@@ -66,7 +66,7 @@ public abstract class Pickup : MonoBehaviour
                 transform.parent = playerBack.transform;
                 transform.rotation = playerBack.transform.rotation;
 
-                factor = 0f; // Reset factor for future use
+                counter = 0f; // Reset counter for future use
             }
 
             return;

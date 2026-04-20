@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System;
+using Unity.VisualScripting;
+
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -139,11 +141,16 @@ namespace StarterAssets
         private float _fallTimeoutDelta;
         public float _speedsterPercent { get; private set; }
 
+        private bool skyRunning;
+        private Vector3 inputDirection;
+
+
         // animation IDs
         private int _animIDGrounded;
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDSkyRun;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -215,6 +222,7 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDSkyRun = Animator.StringToHash("SkyRun");
         }
 
         private void HandleCombatInput()
@@ -230,8 +238,24 @@ namespace StarterAssets
             }
         }
 
+        public void SkyRunningStart()
+        {
+            skyRunning = true;
+            Grounded = false;
+            _animator.SetBool(_animIDSkyRun, true);
+            _controller.Move(new Vector3 (0, 10, 0));
+
+            // Boost so skyrunning is fast from the start
+            _currentSprintTime += 10;
+        }
+        public void SkyRunningEnd()
+        {
+            skyRunning = false;
+            _animator.SetBool(_animIDSkyRun, false);
+        }
         private void GroundedCheck()
         {
+            if (skyRunning) { return; }
             Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
                 transform.position.z);
 
@@ -255,16 +279,27 @@ namespace StarterAssets
                 _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
             }
 
-            _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+            if (!skyRunning)
+            {
+                _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+                _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+            }
+            else
+            {
+                _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+                _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, -360f, 360f);
+
+            }
+
 
             CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
-                _cinemachineTargetYaw, 0.0f);
+                    _cinemachineTargetYaw, 0.0f);
         }
 
         private void Move()
         {
             Vector2 moveInput = _combatManager._isAttacking ? Vector2.zero : _input.move;
+            if (skyRunning) { moveInput = new Vector2(0, 1); }
             float targetSpeed = CalculateTargetSpeed(moveInput);
 
             if (_combatManager._isAttacking && Grounded)
@@ -290,7 +325,7 @@ namespace StarterAssets
                 return 0.0f;
             }
 
-            if (_input.sprint)
+            if (_input.sprint || skyRunning)
             {
                 _currentSprintTime += Time.deltaTime;
 
@@ -308,7 +343,7 @@ namespace StarterAssets
                 }
 
                 // Apply max speed cap if set
-                if (MaxSpeedCap > 0)
+                if (MaxSpeedCap > 0 && !skyRunning)
                 {
                     _intendedTargetSpeed = Mathf.Min(_intendedTargetSpeed, MaxSpeedCap);
                 }
@@ -370,19 +405,44 @@ namespace StarterAssets
 
         private void PerformMovement(Vector2 moveInput)
         {
-            Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
+            if (skyRunning)
+            {
+                inputDirection = new Vector3(moveInput.x, _mainCamera.transform.forward.y, moveInput.y);
+            }
+            else
+            {
+                inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
+            }
 
             if (moveInput != Vector2.zero)
             {
-                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                  _mainCamera.transform.eulerAngles.y;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    RotationSmoothTime);
+                if (skyRunning)
+                {
+                    _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
+                  _mainCamera.transform.eulerAngles.y;
+                    float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+                        RotationSmoothTime);
 
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                    transform.rotation = Quaternion.Euler(_mainCamera.transform.eulerAngles.x, rotation, 0.0f);
+                }
+                else
+                {
+                    _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
+                  _mainCamera.transform.eulerAngles.y;
+                    float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+                        RotationSmoothTime);
+
+                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                }
+
             }
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+            if (skyRunning)
+            {
+                targetDirection = Quaternion.Euler(_mainCamera.transform.eulerAngles.x, _targetRotation, 0.0f) * Vector3.forward;
+            }
+
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
         }
@@ -409,6 +469,7 @@ namespace StarterAssets
 
         private void UpdateJumpBuffer()
         {
+            if (skyRunning) { return; }
             if (_input.jump)
             {
                 _jumpBufferTimer = JumpBufferTime;
@@ -479,7 +540,7 @@ namespace StarterAssets
 
         private void ApplyGravity()
         {
-            if (!Grounded && _verticalVelocity < _terminalVelocity)
+            if (!Grounded && _verticalVelocity < _terminalVelocity && !skyRunning)
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
             }

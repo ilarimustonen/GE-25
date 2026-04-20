@@ -186,7 +186,7 @@ public class CloneFade : MonoBehaviour
         // --- 3. FADE OUT Phase ---
         else if (_timeElapsed < _currentFadeTime)
         {
-            // Calculate time factor (t) over the FadeOutDuration
+            // Calculate time counter (t) over the FadeOutDuration
             float t = (_timeElapsed - fadeOutStart) / FadeOutDuration;
             newAlpha = Mathf.Lerp(1.0f, 0.0f, t);
         }
