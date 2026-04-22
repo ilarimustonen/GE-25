@@ -4,27 +4,32 @@ public abstract class Pickup : MonoBehaviour
 {
     public abstract string objectiveName { get; }
     public abstract string description { get; }
+    public abstract float maxTravelledDistance { get; }
     protected abstract BoxCollider pickupCollider { get; }
+
     protected static GameObject deliveryObj;
 
     private bool playerInRange;
     private float counter;
     private Vector3 originalPosition;
-    private Vector3 deliverLocation;
-    private Transform playerLocation;
+    private static Vector3 playerPreviousPos;
+    private static float distanceTravelled;
     private bool attachingToBack;
     private static GameObject playerBack;
     private static StarterAssetsInputs _playerInputs;
     private static GameObject _player;
     private static bool attached;
-    private static float distanceToDelivery;
+    private static bool charged;
+    public static bool Charged { get { return charged; } }
+    public static float DistanceTraveled { get { return distanceTravelled; } }
+
+
 
     private void Awake()
     {
         _player = GameObject.FindGameObjectWithTag("Player");
         _playerInputs = _player.GetComponent<StarterAssetsInputs>();
         playerBack = GameObject.FindGameObjectWithTag("PlayerBack");
-        playerLocation = _player.transform;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -72,25 +77,7 @@ public abstract class Pickup : MonoBehaviour
             return;
         }
 
-        if (attached)
-        {
-            distanceToDelivery = Vector3.Distance(playerLocation.position, deliverLocation);
-            if (distanceToDelivery <= 5 && _playerInputs.interact)
-            {
-                // Call the deliver method
-                Deliver();
-
-                // Consume input
-                _playerInputs.interact = false;
-
-                // Debug
-                Debug.Log("Delivered");
-            }
-
-            return;
-        }
-
-        if (playerInRange  && _playerInputs.interact)
+        if (playerInRange  && _playerInputs.interact && !attached && !attachingToBack)
         {
                 // Save the original position of the item before starting the attachment process.
                 originalPosition = transform.position;
@@ -107,18 +94,40 @@ public abstract class Pickup : MonoBehaviour
                 // Set the flag for attached
                 attached = true;
 
-                // Set the delivery location
-                deliverLocation = deliveryObj.transform.position;
-
                 // consume the input
                 _playerInputs.interact = false;
         }
 
     }
+
+    private void FixedUpdate()
+    {
+        if (attached && !attachingToBack && !charged)
+        {
+            if (playerPreviousPos == new Vector3(0, 0, 0))
+            {
+                playerPreviousPos = _player.transform.position;
+            }
+
+            distanceTravelled += Vector3.Distance(playerPreviousPos, _player.transform.position);
+            Debug.Log("Player has traveled " + distanceTravelled);
+
+            if (distanceTravelled >= maxTravelledDistance)
+            {
+                charged = true;
+                Debug.Log("charged");
+            }
+
+            playerPreviousPos = _player.transform.position;
+        }
+    }
     public void Deliver()
     {
         attached = false;
-        Debug.Log("Disabling object");
+        charged = false;
+        distanceTravelled = 0f;
+        playerPreviousPos = new Vector3(0, 0, 0);
+        Debug.Log("Delivered object");
         gameObject.SetActive(false);
     }
 }

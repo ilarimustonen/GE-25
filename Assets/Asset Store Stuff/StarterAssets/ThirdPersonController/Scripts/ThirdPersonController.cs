@@ -142,6 +142,7 @@ namespace StarterAssets
         public float _speedsterPercent { get; private set; }
 
         private bool skyRunning;
+        public bool isSkyrunning { get { return skyRunning; } }
         private Vector3 inputDirection;
 
 
@@ -244,14 +245,17 @@ namespace StarterAssets
             Grounded = false;
             _animator.SetBool(_animIDSkyRun, true);
             _controller.Move(new Vector3 (0, 10, 0));
+            CameraAngleOverride = -20f;
 
             // Boost so skyrunning is fast from the start
-            _currentSprintTime += 10;
+            _currentSprintTime += 30;
         }
         public void SkyRunningEnd()
         {
             skyRunning = false;
+            CameraAngleOverride = 0f;
             _animator.SetBool(_animIDSkyRun, false);
+            transform.rotation = Quaternion.Euler(0.0f, transform.rotation.y, 0.0f);
         }
         private void GroundedCheck()
         {
@@ -287,7 +291,7 @@ namespace StarterAssets
             else
             {
                 _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-                _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, -360f, 360f);
+                _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, -30f, 80f);
 
             }
 

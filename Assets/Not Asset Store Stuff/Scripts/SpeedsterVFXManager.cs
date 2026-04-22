@@ -59,12 +59,15 @@ public class SpeedsterVFXManager : MonoBehaviour
     public float MaxChromaticAberration = 1.0f;
     public float SpeedEffectChangeSpeed = 5.0f;
     public float camEffectSpeedThreshold = 2.0f;
+    public float maxCamDistance = 7f;
 
     // Internal State
     private SkinnedMeshRenderer[] _playerSkinnedMeshes;
     private Volume _SpeedsterVolume;
     private ThirdPersonController _thirdPersonController;
     private float MainFOV;
+    private float mainCamDistance;
+    private Cinemachine3rdPersonFollow cameraBody;
 
     // Pooling logic
     private int _clonePoolIndex;
@@ -118,6 +121,9 @@ public class SpeedsterVFXManager : MonoBehaviour
         }
 
         if (Camera != null) MainFOV = Camera.m_Lens.FieldOfView;
+
+        cameraBody = (Camera.GetCinemachineComponent(CinemachineCore.Stage.Body) as Cinemachine3rdPersonFollow);
+        if (Camera != null) mainCamDistance = cameraBody.CameraDistance;
 
         _lastPlayerPosition = transform.position;
 
@@ -250,6 +256,14 @@ public class SpeedsterVFXManager : MonoBehaviour
         // Chromatic Aberration
         if (_chromaticAberration != null)
             _chromaticAberration.intensity.value = Mathf.Lerp(0f, MaxChromaticAberration, camSpeedThresholdPercent);
+
+        // Camera distance for skyrunning
+        if (_thirdPersonController.isSkyrunning)
+        {
+            float targetDistance = Mathf.Lerp(mainCamDistance, maxCamDistance, camSpeedThresholdPercent);
+            cameraBody.CameraDistance = targetDistance;
+        }
+
     }
 
     private void HandleMaterialSwap()
