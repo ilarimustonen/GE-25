@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using StarterAssets;
 public abstract class PowerUp : MonoBehaviour
@@ -12,7 +11,7 @@ public abstract class PowerUp : MonoBehaviour
     private float counter;
     public static GameObject _player;
     public static ThirdPersonController _controller;
-    private bool powerupActive;
+    private static bool powerupActive;
     private MeshRenderer[] renderers;
     private bool disabled = false;
 

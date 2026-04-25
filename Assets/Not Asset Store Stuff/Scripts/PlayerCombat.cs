@@ -97,6 +97,9 @@ public class PlayerCombat : MonoBehaviour
     // Force blast colliders
     Collider[] blastColliders;
 
+    // combat toggle
+    [SerializeField]
+    private bool combatToggle = true;
 
 
 
@@ -290,6 +293,9 @@ public class PlayerCombat : MonoBehaviour
 
     public void HandleForceBlast()
     {
+        // Check if combat is even on
+        if (!combatToggle) return;
+
         // Reset the cooldown timer
         _forceBlastTimeoutDelta = ForceBlastCooldown;
 
@@ -302,6 +308,9 @@ public class PlayerCombat : MonoBehaviour
     }
     public void HandleAttack()
     {
+        // Check if combat is even on
+        if (!combatToggle) return;
+
         // Set attacking state
         _isAttacking = true;
 

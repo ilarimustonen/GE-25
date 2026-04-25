@@ -20,6 +20,7 @@ public abstract class Pickup : MonoBehaviour
     private static GameObject _player;
     private static bool attached;
     private static bool charged;
+    private ChargeMeter ChargeMeter;
     public static bool Charged { get { return charged; } }
     public static float DistanceTraveled { get { return distanceTravelled; } }
 
@@ -46,7 +47,7 @@ public abstract class Pickup : MonoBehaviour
             playerInRange = false;
         }
     }
-    public abstract void OnPickedUp();
+    public abstract void OnGrab();
 
     private void Update()
     {
@@ -89,7 +90,8 @@ public abstract class Pickup : MonoBehaviour
                 Debug.Log($"Picked up: {objectiveName} - {description}");
 
                 // Call the pick up logic on the item.
-                OnPickedUp();
+                OnPickUp();
+                OnGrab();
                 
                 // Set the flag for attached
                 attached = true;
@@ -102,7 +104,7 @@ public abstract class Pickup : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (attached && !attachingToBack && !charged)
+        if (attached && !attachingToBack && !charged && transform.parent == playerBack.transform)
         {
             if (playerPreviousPos == new Vector3(0, 0, 0))
             {
@@ -129,5 +131,12 @@ public abstract class Pickup : MonoBehaviour
         playerPreviousPos = new Vector3(0, 0, 0);
         Debug.Log("Delivered object");
         gameObject.SetActive(false);
+    }
+
+    private void OnPickUp()
+    {
+        ChargeMeter = GameObject.FindGameObjectWithTag("ChargeMeter").GetComponent<ChargeMeter>();
+        ChargeMeter.maxCharge = maxTravelledDistance;
+        ChargeMeter.pickup = this;
     }
 }

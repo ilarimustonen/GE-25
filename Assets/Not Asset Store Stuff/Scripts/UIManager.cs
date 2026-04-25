@@ -8,6 +8,14 @@ public class UIManager : MonoBehaviour
     public GameObject scoreCanvas;
     public GameObject cooldownCanvas;
 
+    [SerializeField]
+    private bool healthToggle;
+    [SerializeField]
+    private bool speedToggle;
+    [SerializeField]
+    private bool cooldownToggle;
+    [SerializeField]
+    private bool scoreToggle;
 
     private void Update()
     {
@@ -27,10 +35,10 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            healthCanvas.SetActive(true);
-            speedCanvas.SetActive(true);
-            scoreCanvas.SetActive(true);
-            cooldownCanvas.SetActive(true);
+            if (healthToggle) healthCanvas.SetActive(true);
+            if (speedToggle) speedCanvas.SetActive(true);
+            if (scoreToggle) scoreCanvas.SetActive(true);
+            if (cooldownToggle) cooldownCanvas.SetActive(true);
         }
     }
 }
