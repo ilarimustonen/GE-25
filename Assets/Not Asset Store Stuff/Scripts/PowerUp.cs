@@ -9,9 +9,9 @@ public abstract class PowerUp : MonoBehaviour
 
     private bool playerInRange;
     private float counter;
-    public static GameObject _player;
-    public static ThirdPersonController _controller;
-    private static bool powerupActive;
+    public GameObject _player;
+    public ThirdPersonController _controller;
+    private bool powerupActive;
     private MeshRenderer[] renderers;
     private bool disabled = false;
 
@@ -48,7 +48,7 @@ public abstract class PowerUp : MonoBehaviour
             // Count the ticker for the powerup's duration
             counter += Time.deltaTime; // Increment the counter by the time elapsed since the last frame
 
-            // Stop attaching after the target time)
+            // Stop after the target time)
             if (counter >= powerupTime)
             {
                 powerupActive = false;
@@ -67,6 +67,8 @@ public abstract class PowerUp : MonoBehaviour
 
             // Call the pick up logic on the item.
             OnPickedUp();
+
+            counter = 0f; // Reset counter for future use
 
             // Set the flag for activation
             powerupActive = true;

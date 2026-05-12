@@ -142,6 +142,7 @@ namespace StarterAssets
         public float _speedsterPercent { get; private set; }
 
         private bool skyRunning;
+        private bool speedy;
         public bool isSkyrunning { get { return skyRunning; } }
         private Vector3 inputDirection;
 
@@ -257,6 +258,15 @@ namespace StarterAssets
             _animator.SetBool(_animIDSkyRun, false);
             transform.rotation = Quaternion.Euler(0.0f, transform.rotation.y, 0.0f);
         }
+
+        public void SpeedUpStart()
+        {
+            speedy = true;
+        }
+        public void SpeedUpEnd()
+        {
+            speedy = false;
+        }
         private void GroundedCheck()
         {
             if (skyRunning) { return; }
@@ -331,7 +341,7 @@ namespace StarterAssets
 
             if (_input.sprint || skyRunning)
             {
-                _currentSprintTime += Time.deltaTime;
+                if (speedy) _currentSprintTime = 100f; else _currentSprintTime += Time.deltaTime;
 
                 if (_currentSprintTime <= SprintAccelerationTime)
                 {
