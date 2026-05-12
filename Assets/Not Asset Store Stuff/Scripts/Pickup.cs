@@ -1,6 +1,6 @@
 using UnityEngine;
 using StarterAssets;
-public abstract class Pickup : MonoBehaviour
+public abstract class Pickup : MonoBehaviour, IInteractable
 {
     public abstract string objectiveName { get; }
     public abstract string description { get; }
@@ -23,6 +23,7 @@ public abstract class Pickup : MonoBehaviour
     private ChargeMeter ChargeMeter;
     public static bool Charged { get { return charged; } }
     public static float DistanceTraveled { get { return distanceTravelled; } }
+    public bool CanInteract => !attached && !attachingToBack;
 
 
 
@@ -78,28 +79,27 @@ public abstract class Pickup : MonoBehaviour
             return;
         }
 
-        if (playerInRange  && _playerInputs.interact && !attached && !attachingToBack)
+        if (playerInRange  && _playerInputs.interact && CanInteract)
         {
-                // Save the original position of the item before starting the attachment process.
-                originalPosition = transform.position;
-
-                // Set the flag to start attaching the item to the player's back.
-                attachingToBack = true;
-
-                // TESTING PURPOSES
-                Debug.Log($"Picked up: {objectiveName} - {description}");
-
-                // Call the pick up logic on the item.
-                OnPickUp();
-                OnGrab();
-                
-                // Set the flag for attached
-                attached = true;
-
-                // consume the input
-                _playerInputs.interact = false;
+                Attach();
+                Interact(_player);
         }
 
+    }
+    public void Interact(GameObject interactor)
+    {
+        OnPickUp();
+        OnGrab();
+        attached = true;
+        _playerInputs.interact = false;
+    }
+    private void Attach()
+    {
+        // Save the original position of the item before starting the attachment process.
+        originalPosition = transform.position;
+
+        // Set the flag to start attaching the item to the player's back.
+        attachingToBack = true;
     }
 
     private void FixedUpdate()

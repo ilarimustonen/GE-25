@@ -1,12 +1,13 @@
-using UnityEngine;
 using StarterAssets;
-public class ObjectiveCollider : MonoBehaviour
+using UnityEngine;
+public class ObjectiveCollider : MonoBehaviour, IInteractable
 {
 
     private bool playerInRangeWithChargedItem;
     private StarterAssetsInputs playerInputs;
     private GameObject player;
     private Pickup item;
+    public bool CanInteract => true;
     private void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -31,11 +32,12 @@ public class ObjectiveCollider : MonoBehaviour
 
     private void Update()
     {
-        if (!playerInRangeWithChargedItem) return;
-        if (playerInputs.interact) { playerInputs.interact = false; OnInteract(); }
+        if (!playerInRangeWithChargedItem || !playerInputs.interact) return;
+        playerInputs.interact = false; 
+        Interact(this.gameObject);
     }
 
-    private void OnInteract()
+    public void Interact(GameObject interactor)
     {
         item.Deliver();
     }
